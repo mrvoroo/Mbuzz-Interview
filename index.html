@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* Layout idea: sticky command bar (search + confidence filter + tabs) over a dark card grid, styled after mbuzz.com's own tokens. */
+/* Layout idea: sticky command bar (search + confidence filter + tabs + presentation switch) over a dark card grid, styled after mbuzz.com's own tokens (#0DB4F9 / #09427E on #040711, Montserrat). */
 :root{
   --bg:#040711;
   --surface:#0a1226;
@@ -38,7 +38,7 @@ h1,h2,h3{text-wrap:balance;line-height:1.35;margin:0}
 header.top{padding:26px 0 8px}
 .eyebrow{display:inline-flex;gap:8px;align-items:center;font-size:12px;letter-spacing:.04em;color:var(--accent);border:1px solid var(--line);border-radius:50px;padding:4px 14px;background:rgba(13,180,249,.06)}
 h1{font-size:clamp(26px,5vw,42px);font-weight:700;margin-top:14px}
-h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;background-image:linear-gradient(90deg,#0DB4F9,#4db8ff)}
+h1 span{background-image:linear-gradient(90deg,#0DB4F9,#4db8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
 .sub{color:var(--muted);max-width:68ch;margin:8px 0 0}
 .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
 .pill{border:1px solid var(--line);border-radius:50px;padding:6px 16px;font-size:13px;background:rgba(255,255,255,.02);color:var(--muted)}
@@ -46,19 +46,22 @@ h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text
 #cd{border-color:var(--accent);color:var(--text)}
 .bar{position:sticky;top:0;z-index:20;background:rgba(4,7,17,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);margin-top:18px}
 .bar .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 0 8px}
-.search{flex:1 1 260px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:50px;padding:0 16px}
+.search{flex:1 1 240px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:50px;padding:0 16px}
 .search input{flex:1;background:none;border:0;color:var(--text);font:inherit;padding:10px 0;outline:none;min-width:0}
 .search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(13,180,249,.18)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font:inherit;font-size:13px;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:50px;padding:5px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .chip:hover{color:var(--text);border-color:var(--accent)}
 .chip[aria-pressed="true"]{color:#fff;background:var(--deep);border-color:var(--accent)}
+#presentBtn{border-color:var(--accent);color:var(--text)}
+#presentBtn[aria-pressed="true"]{background:var(--grad)}
 .dot{width:9px;height:9px;border-radius:50%;display:inline-block;background:var(--muted)}
 .dot.ok{background:var(--ok)}.dot.mid{background:var(--mid)}.dot.no{background:var(--no)}.dot.op{background:var(--op)}
 nav.tabs{display:flex;gap:4px;overflow-x:auto;padding:0 0 10px;scrollbar-width:thin}
 .tab{font:inherit;font-size:14px;white-space:nowrap;color:var(--muted);background:none;border:0;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer}
 .tab:hover{color:var(--text)}
 .tab[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab.mine-tab::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--op);margin-inline-start:7px;vertical-align:middle}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
 main{padding:22px 0 70px}
 .panel{display:none}
@@ -66,12 +69,17 @@ main{padding:22px 0 70px}
 body.all .panel.empty{display:none}
 .panel>h2{font-size:22px;margin:6px 0 4px}
 .panel>.lead{color:var(--muted);margin:0 0 18px;max-width:75ch}
+.panel h3.sec{font-size:17px;margin:8px 0 10px}
 .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));margin-bottom:26px}
-.grid.tiles{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.grid.tiles{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
 .card{background:linear-gradient(180deg,var(--surface-2),var(--surface));border:1px solid var(--line);border-radius:18px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .card h3{font-size:16px;font-weight:600}
 .card p{margin:0;font-size:15px}
+.card p.adv{font-size:13.5px;color:var(--mid);border-top:1px dashed var(--line);padding-top:8px}
 .card .tag{align-self:flex-start}
+.card .meta2{display:flex;flex-wrap:wrap;gap:6px}
+.mini{font-size:12px;border:1px solid var(--line);border-radius:50px;padding:2px 11px;color:var(--muted)}
+.mini.hl{color:var(--accent);border-color:var(--accent)}
 .badge{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;border-radius:50px;padding:2px 11px;border:1px solid currentColor}
 .badge.ok{color:var(--ok)}.badge.mid{color:var(--mid)}.badge.no{color:var(--no)}.badge.op{color:var(--op)}
 .src{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:auto;padding-top:6px}
@@ -80,12 +88,19 @@ body.all .panel.empty{display:none}
 .tile{text-align:right}
 .tile .n{font-size:30px;font-weight:700;color:var(--accent);line-height:1.2;font-variant-numeric:tabular-nums}
 .tile .l{font-size:13px;color:var(--muted)}
+.hero{border:1px solid var(--accent);background:linear-gradient(135deg,rgba(9,66,126,.6),rgba(10,18,38,.92));border-radius:22px;padding:22px;margin-bottom:22px}
+.hero h2{font-size:clamp(20px,3.4vw,28px);margin-bottom:8px}
+.hero p{margin:0 0 6px;max-width:75ch;font-size:16.5px}
+.hero .src{padding-top:8px}
 .pitch{border:1px solid var(--accent);background:linear-gradient(135deg,rgba(9,66,126,.55),rgba(10,18,38,.9));border-radius:22px;padding:22px;margin-bottom:22px}
 .pitch h2{font-size:18px;color:var(--accent);margin-bottom:10px}
 .pitch p{margin:0 0 10px;font-size:17px;max-width:75ch}
 .btn{font:inherit;font-size:14px;color:#fff;background:var(--grad);border:0;border-radius:50px;padding:8px 20px;cursor:pointer}
-.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}
 .btn:hover{filter:brightness(1.12)}
+.partners{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+.pchip{font-family:'Montserrat',sans-serif;font-weight:600;font-size:14px;border:1px solid var(--line);background:var(--surface);border-radius:50px;padding:7px 18px}
+.pchip.strong{border-color:var(--accent);background:rgba(13,180,249,.1)}
+.fnote{font-size:12.5px;color:var(--muted);margin:0 0 24px}
 .tl{position:relative;margin:0 0 26px;padding:0 22px 0 0;border-right:2px solid var(--line);display:flex;flex-direction:column;gap:14px}
 .tl .ev{position:relative}
 .tl .ev::before{content:"";position:absolute;right:-30px;top:20px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--bg)}
@@ -93,7 +108,7 @@ body.all .panel.empty{display:none}
 .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:18px;margin-bottom:12px}
 table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
 th,td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line);vertical-align:top}
-th{background:var(--surface-2);color:var(--accent);font-weight:600;position:sticky;top:0}
+th{background:var(--surface-2);color:var(--accent);font-weight:600}
 tr:last-child td{border-bottom:0}
 tr.it:hover td{background:rgba(13,180,249,.05)}
 .note{font-size:13px;color:var(--muted);margin:0 0 24px}
@@ -120,10 +135,21 @@ details.qa[open]{border-color:var(--accent)}
 .check label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer;font-size:15px}
 .check input{accent-color:var(--accent);width:18px;height:18px;margin-top:4px}
 .check input:checked+span{color:var(--muted);text-decoration:line-through}
+.pad{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.pad label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.pad textarea{font:inherit;font-size:14.5px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:74px;resize:vertical}
+.pad textarea:focus{outline:none;border-color:var(--accent)}
 .hide{display:none!important}
 .foot{border-top:1px solid var(--line);padding:18px 0 40px;color:var(--muted);font-size:13px}
 .empty-msg{display:none;text-align:center;color:var(--muted);padding:40px 0}
 body.nores .empty-msg{display:block}
+/* presentation mode: hides everything personal, advisory, uncertain or opinion */
+body.present .mine,
+body.present [data-c="no"],
+body.present [data-c="op"],
+body.present .badge,
+body.present .tab.mine-tab,
+body.present #fchips{display:none!important}
 @media (max-width:520px){.panel>h2{font-size:19px}.pitch p{font-size:16px}}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
@@ -133,11 +159,11 @@ body.nores .empty-msg{display:block}
 <header class="top">
   <span class="eyebrow">ملف تحضير شخصي · غير تابع لشركة <bdi class="en" dir="ltr">MBUZZ</bdi></span>
   <h1>انترفيو <span><bdi class="en" dir="ltr">MBUZZ</bdi></span> · الثلاثاء 17 نوفمبر 2026</h1>
-  <p class="sub">كل معلومة هنا عليها درجة ثقة ومصدر. لو المعلومة مش مؤكدة، الصفحة بتقولك كده صراحة وبتقولك تقولها إزاي بدل ما تتبنّاها كحقيقة.</p>
+  <p class="sub mine">كل معلومة عليها درجة ثقة ومصدر. لو المعلومة مش مؤكدة، الصفحة بتقولك كده صراحة. الأقسام اللي جنبها نقطة بنفسجية خاصة بيك، وزر «وضع العرض» بيخفيها لو هتعرض الصفحة عليهم.</p>
   <div class="meta">
-    <span class="pill" id="cd">الانترفيو الساعة <b>3:00 عصرًا</b> بتوقيت الرياض</span>
-    <span class="pill">آخر تحديث للبحث: <b>17 نوفمبر 2026</b></span>
-    <span class="pill">الموقع المقصود: <b><bdi class="en" dir="ltr">mbuzz.com</bdi></b> (الشركة السعودية)</span>
+    <span class="pill mine" id="cd">الانترفيو الساعة <b>3:00 عصرًا</b> بتوقيت الرياض</span>
+    <span class="pill">آخر مراجعة للبيانات: <b>17 نوفمبر 2026</b></span>
+    <span class="pill">المصدر الأساسي: <b><bdi class="en" dir="ltr">mbuzz.com</bdi></b> (الشركة السعودية)</span>
   </div>
 </header>
 </div>
@@ -147,34 +173,35 @@ body.nores .empty-msg{display:block}
     <div class="row">
       <label class="search" for="q">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-        <input id="q" type="search" placeholder="دوّر في كل المعلومات: Magna، H100، تأسيس، Phison…" autocomplete="off">
+        <input id="q" type="search" placeholder="دوّر في كل المعلومات: Magna، H100، Cisco، 2007…" autocomplete="off">
       </label>
-      <div class="chips" role="group" aria-label="فلتر درجة الثقة">
+      <div class="chips" id="fchips" role="group" aria-label="فلتر درجة الثقة">
         <button class="chip" data-f="all" aria-pressed="true">الكل</button>
         <button class="chip" data-f="ok" aria-pressed="false"><span class="dot ok"></span>مؤكد</button>
         <button class="chip" data-f="mid" aria-pressed="false"><span class="dot mid"></span>بحذر</button>
         <button class="chip" data-f="no" aria-pressed="false"><span class="dot no"></span>لا تذكره</button>
         <button class="chip" data-f="op" aria-pressed="false"><span class="dot op"></span>رأيي</button>
       </div>
+      <button class="chip" id="presentBtn" type="button" aria-pressed="false" title="يخفي الأقسام والملاحظات الخاصة بك">وضع العرض</button>
     </div>
     <nav class="tabs" role="tablist" aria-label="أقسام الملف" id="tabs"></nav>
   </div>
 </div>
 
 <main class="wrap" id="main">
-  <p class="empty-msg">مفيش نتائج. جرّب كلمة تانية أو ارجع لفلتر «الكل».</p>
-
-  <section class="panel" id="p-summary" data-title="الملخص"></section>
+  <p class="empty-msg">مفيش نتائج. جرّب كلمة تانية.</p>
+  <section class="panel" id="p-home" data-title="الرئيسية"></section>
   <section class="panel" id="p-company" data-title="الشركة"></section>
   <section class="panel" id="p-work" data-title="العروض والمشاريع"></section>
   <section class="panel" id="p-news" data-title="الشركاء والأخبار"></section>
   <section class="panel" id="p-market" data-title="السوق والفرص"></section>
-  <section class="panel" id="p-qa" data-title="الأسئلة والردود"></section>
-  <section class="panel" id="p-safe" data-title="حدود الدقة"></section>
+  <section class="panel" id="p-me" data-title="خبرتي مع MBUZZ" data-mine="1"></section>
+  <section class="panel" id="p-qa" data-title="الأسئلة والردود" data-mine="1"></section>
+  <section class="panel" id="p-safe" data-title="حدود الدقة" data-mine="1"></section>
 </main>
 
 <div class="wrap foot">
-  <p>مصادر البحث: موقع الشركة (الرئيسية، من نحن، المشاريع، الوظايف)، بيانات صحفية منشورة، وقواعد بيانات شركات خارجية. المصادر الخارجية ممكن تكون قديمة أو تقديرية، وده موضّح على كل معلومة. راجع الأرقام الحساسة من موقعهم نفسه قبل الانترفيو لو معاك دقيقتين.</p>
+  <p>المصادر: صفحات موقع الشركة نفسه (قرأتها مباشرة يوم 17 نوفمبر 2026)، بيانات صحفية منشورة، وقواعد بيانات شركات خارجية. المصادر الخارجية ممكن تكون قديمة أو تقديرية، وده موضّح على كل معلومة.</p>
 </div>
 
 <script>
@@ -183,7 +210,18 @@ var S = {
   site:['موقع الشركة','https://mbuzz.com/'],
   about:['صفحة من نحن','https://mbuzz.com/about'],
   proj:['صفحة المشاريع','https://mbuzz.com/projects'],
+  part:['صفحة الشركاء','https://mbuzz.com/partners'],
   car:['صفحة الوظايف','https://mbuzz.com/careers'],
+  cs:['دراسات الحالة','https://mbuzz.com/case-studies'],
+  cs1:['دراسة: Making Connectivity Stronger','https://mbuzz.com/case-studies/making-connectivity-stronger'],
+  cs2:['دراسة: Upgrading Business','https://mbuzz.com/case-studies/upgrading-business-with-technological-innovation'],
+  cs3:['دراسة: Data Security','https://mbuzz.com/case-studies/how-mbuzz-facilitated-data-security-through-new-age-technology'],
+  cs4:['دراسة: Business Continuity','https://mbuzz.com/case-studies/automation-solution-for-the-ease-of-business-continuity-management'],
+  nMagna:['خبر Magna AI على موقعهم','https://mbuzz.com/media/mbuzz-forms-strategic-partnership-with-magna-ai-to-enable-digital-transformation-and-ai-adoption-across-the-middle-east-and-africa'],
+  nTawal:['خبر TAWAL على موقعهم','https://mbuzz.com/media/mbuzz-x-tawal'],
+  nG6:['خبر 6GAI على موقعهم','https://mbuzz.com/media/mbuzz-6g-ai-sweden-ab-to-launch-ai-cloud-with-nvidia-tech-in-sweden'],
+  nVembu:['خبر Vembu على موقعهم','https://mbuzz.com/media/vembu-announces-partnership-with-mbuzz'],
+  nEdge:['خبر Edgecore على موقعهم','https://mbuzz.com/media/edgecore-networks-signs-mbuzz-as-a-value-added-distributor-for-middle-east-and-africa'],
   magna:['بيان Magna AI (Zawya)','https://www.zawya.com/en/press-release/companies-news/magna-ai-and-mbuzz-partner-to-deliver-enterprise-ai-infrastructure-and-transformation-services-across-the-middle-east-and-africa-478188'],
   magna2:['MENA Startup Digest','https://menastartupdigest.com/?p=50865'],
   leap:['Riyadh Daily: Magna AI في LEAP 2026','https://alriyadhdaily.com/article/86a7fb45c8954f738f95e60dacdc4d79'],
@@ -201,248 +239,316 @@ var S = {
 };
 var LBL = {ok:'مؤكد',mid:'بحذر',no:'لا تذكره',op:'رأيي'};
 function en(t){return String(t).replace(/\[\[(.+?)\]\]/g,'<bdi class="en" dir="ltr">$1</bdi>');}
-function plain(t){return String(t).replace(/<[^>]+>/g,' ').replace(/\[\[|\]\]/g,'').toLowerCase();}
+function plain(t){return String(t).replace(/<[^>]+>/g,' ').replace(/\[\[|\]\]/g,'').toLowerCase().replace(/"/g,'');}
 function badge(c){return '<span class="badge '+c+'"><span class="dot '+c+'"></span>'+LBL[c]+'</span>';}
 function srcs(a){return (a&&a.length)?'<div class="src">'+a.map(function(k){var s=S[k];return '<a href="'+s[1]+'" target="_blank" rel="noopener">'+s[0]+'</a>';}).join('')+'</div>':'';}
 function card(o){
-  var t=plain(o.t+' '+o.b+' '+(o.k||''));
-  return '<article class="card it" data-c="'+o.c+'" data-t="'+t.replace(/"/g,'')+'"><span class="tag">'+badge(o.c)+'</span><h3>'+en(o.t)+'</h3><p>'+en(o.b)+'</p>'+srcs(o.s)+'</article>';
+  var adv=o.n?'<p class="adv mine">'+en(o.n)+'</p>':'';
+  return '<article class="card it'+(o.m?' mine':'')+'" data-c="'+o.c+'" data-t="'+plain(o.t+' '+o.b+' '+(o.k||''))+'"><span class="tag">'+badge(o.c)+'</span><h3>'+en(o.t)+'</h3><p>'+en(o.b)+'</p>'+adv+srcs(o.s)+'</article>';
 }
 function tile(o){
-  return '<div class="card tile it" data-c="'+o.c+'" data-t="'+plain(o.n+' '+o.l+' '+(o.k||'')).replace(/"/g,'')+'"><div class="n">'+en(o.n)+'</div><div class="l">'+en(o.l)+'</div>'+badge(o.c)+srcs(o.s)+'</div>';
+  return '<div class="card tile it" data-c="'+o.c+'" data-t="'+plain(o.n+' '+o.l+' '+(o.k||''))+'"><div class="n">'+en(o.n)+'</div><div class="l">'+en(o.l)+'</div>'+badge(o.c)+srcs(o.s)+'</div>';
+}
+function pcard(o){
+  return '<article class="card it" data-c="ok" data-t="'+plain(o.cl+' '+o.cat+' '+o.co+' '+o.tech+' '+o.sc)+'"><h3>'+en(o.cl)+'</h3><div class="meta2"><span class="mini hl">'+en(o.cat)+'</span><span class="mini">'+o.co+'</span><span class="mini">'+en(o.tech)+'</span></div><p>'+en(o.sc)+'</p></article>';
 }
 function ev(o){
-  return '<div class="ev card it" data-c="'+o.c+'" data-t="'+plain(o.y+' '+o.t+' '+o.b).replace(/"/g,'')+'"><span class="yr">'+o.y+'</span><h3>'+en(o.t)+'</h3><p>'+en(o.b)+'</p><span class="tag">'+badge(o.c)+'</span>'+srcs(o.s)+'</div>';
+  return '<div class="ev card it" data-c="'+o.c+'" data-t="'+plain(o.y+' '+o.t+' '+o.b)+'"><span class="yr">'+o.y+'</span><h3>'+en(o.t)+'</h3><p>'+en(o.b)+'</p>'+(o.n?'<p class="adv mine">'+en(o.n)+'</p>':'')+'<span class="tag">'+badge(o.c)+'</span>'+srcs(o.s)+'</div>';
 }
-function qa(o,i){
+function qa(o){
   var facts=o.f?'<div class="facts"><small>نقاط ثابتة ترتكز عليها</small><ul>'+o.f.map(function(x){return '<li>'+en(x)+'</li>';}).join('')+'</ul></div>':'';
   var eng=o.e?'<div class="say en-ans"><small>If the interview is in English</small>'+o.e+'</div>':'';
   var warn=o.w?'<div class="facts"><small style="color:var(--mid)">انتبه</small>'+en(o.w)+'</div>':'';
-  return '<details class="qa it" data-c="op" data-t="'+plain(o.q+' '+o.a+' '+(o.f||[]).join(' ')).replace(/"/g,'')+'"><summary><span>'+en(o.q)+'</span></summary><div class="body"><div class="say"><small>رد مقترح</small>'+en(o.a)+'</div>'+facts+warn+eng+'</div></details>';
+  return '<details class="qa it mine" data-c="op" data-t="'+plain(o.q+' '+o.a+' '+(o.f||[]).join(' '))+'"><summary><span>'+en(o.q)+'</span></summary><div class="body"><div class="say"><small>رد مقترح</small>'+en(o.a)+'</div>'+facts+warn+eng+'</div></details>';
 }
 function list(a){return '<ul>'+a.map(function(x){return '<li>'+en(x)+'</li>';}).join('')+'</ul>';}
 
-/* ---------- content ---------- */
-var P = {};
-
-P.summary =
-'<h2>الملخص في دقيقة</h2><p class="lead">اللي تقوله في أول 30 ثانية، وبعدها الأرقام اللي تقدر تثبّتها.</p>'+
-'<div class="pitch"><h2>جملة التعريف (30 ثانية)</h2>'+
-'<p id="pitch">[[MBUZZ]] شركة سعودية مقرها الرياض، بدأت سنة 2007 في الموبايل والإعلان، وتحولت لمزوّد حلول [[AI]] و[[ICT]]. اليوم بتوصّل البنية اللي الذكاء الاصطناعي بيشتغل عليها (كلاسترات [[GPU]] وشبكات وتخزين) لجهات زي [[SDAIA]] وتابي، وآخر خطواتها شراكة مع [[Magna AI]] لنقل مشاريع الذكاء الاصطناعي من التجربة للتشغيل الفعلي.</p>'+
-'<p style="font-size:14px;color:var(--muted)">كل جزء في الجملة دي ليه مصدر في الأقسام التالية. لما تتكلم قول «بحسب موقعكم» قبل الأرقام اللي بتيجي منهم.</p>'+
-'<button class="btn" id="copyPitch" type="button">نسخ الجملة</button> <span id="copyMsg" style="font-size:13px;color:var(--ok)"></span></div>'+
-'<div class="grid tiles">'+
- tile({n:'2007',l:'سنة التأسيس',c:'ok',s:['about']})+
- tile({n:'الرياض',l:'المقر. مكاتب استراتيجية في الخبر ودبي',c:'ok',s:['site']})+
- tile({n:'2022',l:'تحولت لشركة مساهمة',c:'ok',s:['about']})+
- tile({n:'12',l:'مشروع معلن في صفحة المشاريع',c:'ok',s:['proj']})+
- tile({n:'500+',l:'خبير (ادعاء الشركة. عدادات الموقع بتظهر صفر)',c:'mid',s:['about'],k:'خبراء موظفين فريق'})+
- tile({n:'50+',l:'شراكة عالمية و40+ دولة (ادعاء الشركة)',c:'mid',s:['about'],k:'partners countries دول'})+
-'</div>'+
-'<div class="grid">'+
- card({t:'هما بيعملوا إيه بالبساطة دي',b:'مش شركة برمجيات ولا وكالة. هي شركة تكامل وبنية تحتية تقنية: بتورّد وتركّب وتشغّل سيرفرات [[GPU]] وشبكات اتصالات وتغطية داخل المباني وكاميرات ذكية وتخزين، لعملاء حكوميين وكبار.',c:'ok',s:['site','proj']})+
- card({t:'هويتين مش هوية واحدة',b:'[[MBUZZ]] للحلول والخدمات، و[[MBUZZ Technologies]] ذراع التوزيع (موقع منفصل). الموقع الرئيسي بيقدّمهم كمنظومة واحدة.',c:'ok',s:['site','cbt']})+
- card({t:'الاتجاه الحالي',b:'من توريد الأجهزة لتقديم [[AI]] كخدمة متكاملة (استشارات + بنية + تشغيل). شراكة [[Magna AI]] هي أوضح مثال.',c:'mid',s:['magna','magna2']})+
-'</div>'+
-'<div class="box check"><h3>قبل الساعة 3</h3><div id="checklist"></div></div>';
-
-P.company =
-'<h2>الشركة والخط الزمني</h2><p class="lead">التواريخ اللي مؤكدة من موقعهم هي اللي تقدر تقولها بثقة. الباقي مصنّف.</p>'+
-'<div class="tl">'+
- ev({y:'2007',t:'التأسيس',b:'اتأسست كشركة خاصة تحت اسم [[Mobile Business Company]] وكان تركيزها على التجارة عبر الموبايل ومنصات الإعلان.',c:'ok',s:['about']})+
- ev({y:'2011',t:'بداية مشاريع [[DAS]] للاتصالات',b:'الموقع بيقول إن مشاريع تغطية الاتصالات الداخلية بدأت من 2011 وما بعدها.',c:'ok',s:['about']})+
- ev({y:'2016–2017',t:'أبراج مكة ومطار الملك عبدالعزيز',b:'محطات في تاريخهم: [[Makkah Clock Tower]] سنة 2016 ومطار الملك عبدالعزيز الدولي سنة 2017.',c:'ok',s:['about']})+
- ev({y:'2022',t:'شركة مساهمة + تمويل نمو',b:'تحولت لشركة مساهمة. وفي نفس السنة قواعد بيانات خارجية بتذكر تمويل نمو بمبلغ غير معلن بقيادة [[Tech Invest Com]].',c:'mid',s:['about','preqin','cb']})+
- ev({y:'أكتوبر 2023',t:'تصريح عن «أكبر مركز ذكاء اصطناعي»',b:'رئيس مجلس الإدارة قال على قناة الإخبارية إن اتفاقية كبرى اتوقعت لبناء أكبر مركز ذكاء اصطناعي في المملكة. الطرف الثاني وحجم الصفقة مش معروفين من اللي لقيته.',c:'no',s:['chair']})+
- ev({y:'أكتوبر 2023',t:'شراكة [[Qsan]]',b:'[[MBUZZ Technologies]] أعلنت شراكة مع [[Qsan]] لحلول التخزين للشرق الأوسط وأفريقيا.',c:'ok',s:['qsan']})+
- ev({y:'فبراير 2025',t:'سحابة [[AI]] مع [[6GAI]] السويدية',b:'اتفاقية تعاون لتشغيل سحابة [[AI]] تُدار من مركز بيانات داخل السويد. الإطلاق كان متوقع في أبريل 2025 حسب الخبر.',c:'ok',s:['g6','site']})+
- ev({y:'مايو 2026',t:'موزّع رسمي لـ [[Phison]]',b:'تعيين كموزّع رسمي لحلول التخزين [[Pascari]] في الإمارات والسعودية وغيرها (الخبر مقطوع في النسخة اللي قرأتها، فمتحددش باقي الدول).',c:'ok',s:['phison']})+
- ev({y:'2026',t:'نشر كلاستر [[NVIDIA GB300]]',b:'ذُكر في صفحة من نحن كإنجاز حديث. مفيش تفاصيل عن العميل أو الحجم.',c:'mid',s:['about']})+
- ev({y:'سبتمبر 2026',t:'شراكة [[Magna AI]]',b:'شراكة استراتيجية لتقديم بنية [[AI]] وخدمات التحول للشرق الأوسط وأفريقيا. تغطية صحفية واسعة.',c:'ok',s:['magna','magna2','leap']})+
- ev({y:'سبتمبر 2026',t:'تمديد شراكة [[TAWAL]]',b:'مذكورة في أخبار موقعهم فقط. ملقيتش أي تغطية مستقلة تؤكدها.',c:'no',s:['site']})+
-'</div>'+
-'<h2>القيادة</h2><p class="lead">أسماء موثقة من بيانات صحفية. تأكد من المناصب الحالية على لينكدإن قبل ما تذكر أي اسم.</p>'+
-'<div class="grid">'+
- card({t:'[[Fawwaz Alshammari]] · المدير العام',b:'ظهر كـ [[Managing Director]] في بيان [[Magna AI]] (سبتمبر 2026). قال إن العملاء عايزين [[AI]] يشتغل في واقع أعمالهم، يعني البنية والتكامل والتحول يتسلموا مع بعض وبدعم محلي. مصدر قديم كتبه [[CEO]].',c:'ok',s:['magna','cbt'],k:'فواز الشمري'})+
- card({t:'م. [[Nawaf Al-Shammari]] · رئيس مجلس الإدارة',b:'ظهر بهذا المنصب في تصريح أكتوبر 2023 وفي خبر [[6GAI]] (فبراير 2025).',c:'ok',s:['chair','g6'],k:'نواف الشمري'})+
- card({t:'[[Sabir Saleem]] · [[MBUZZ Technologies]]',b:'ظهر كـ [[CEO]] لذراع التوزيع في خبر [[Qsan]] (أكتوبر 2023). مش متأكد إنه لسه في المنصب.',c:'mid',s:['qsan']})+
- card({t:'الموقع نفسه ما بيعرضش فريق قيادة',b:'صفحة من نحن مفيهاش أسماء. يعني الأسماء من الصحافة، مش من موقعهم.',c:'ok',s:['about']})+
-'</div>'+
-'<h2>الحجم والتمويل</h2>'+
-'<div class="grid">'+
- card({t:'عدد الموظفين',b:'الشركة بتقول 500+ خبير. [[Crunchbase]] بيصنّفها 251 إلى 500 موظف. الرقمين مختلفين، فقول «بحسب موقعكم أكتر من 500 خبير».',c:'mid',s:['about','cb']})+
- card({t:'التمويل',b:'جولة نمو واحدة سنة 2022 بقيادة [[Tech Invest Com]]. المبلغ غير معلن.',c:'mid',s:['preqin','cb']})+
- card({t:'الإيرادات',b:'ملقيتش رقم موثوق. ما تذكرش رقم.',c:'no',s:[]})+
-'</div>';
-
+/* ---------- verified data ---------- */
+var FEAT = [
+ {cl:'SDAIA',co:'السعودية',cat:'AI & HPC Infrastructure',tech:'10x H100 GPU',sc:'توريد وتركيب كلاستر AI من [[10x H100]] لمشروع [[Baseer]]، لدعم عمليات المراقبة والأمن (الوصف مقطوع في صفحة المشاريع).'},
+ {cl:'TABBY',co:'السعودية',cat:'AI & HPC Infrastructure',tech:'B300 + B200',sc:'نشر وتكامل بنية AI بكلاسترات [[B300]] و[[B200]] GPU.'},
+ {cl:'Aleria',co:'الإمارات',cat:'AI & HPC Infrastructure',tech:'H200 + GB300',sc:'نشر بنية AI و[[HPC]] بكلاسترات [[H200]] و[[GB300]] GPU.'},
+ {cl:'GACA',co:'السعودية',cat:'In Building Systems',tech:'DAS',sc:'نشر وإدارة لمدة 10 سنوات لنظام [[DAS]] متقدم في مطار الملك عبدالعزيز الدولي (الوصف مقطوع في الموقع).'},
+ {cl:'TAHAKOM',co:'السعودية',cat:'AI & HPC Infrastructure',tech:'AI Edge',sc:'نشر وتكامل وتحسين بنية [[AI]] على الأطراف من البداية للنهاية ([[End-to-End]]).'},
+ {cl:'6GAI',co:'السويد',cat:'AI & HPC Infrastructure',tech:'H200 GPU',sc:'نشر وتكامل بنية [[AI]] و[[HPC]] بكلاسترات [[H200]] عالية الأداء.'}
+];
 var PRJ = [
- ['STC','السعودية','Wireless Solutions','نشر وصيانة وصلات ميكروويف نقطة لمتعدد نقاط','PtMP microwave'],
- ['GACA','السعودية','In-Building Systems','نشر وإدارة 10 سنين لنظام DAS في مطار الملك عبدالعزيز الدولي','DAS'],
- ['ZAIN','السعودية','Smart Cities','أنظمة إنارة ذكية بمراقبة مركزية','Intelligent lighting'],
- ['SDAIA','السعودية','AI & HPC Infrastructure','توريد وتركيب كلاستر AI لمشروع Baseer','10× H100'],
- ['ELM','السعودية','AI & HPC Infrastructure','نشر وتكامل بنية AI','L40S'],
+ ['STC','السعودية','Wireless Solutions','نشر وصيانة وصلات ميكروويف نقطة لمتعدد نقاط، لاتصال عالي السعة وموثوق','PtMP microwave'],
+ ['GACA','السعودية','In Building Systems','مطار الملك عبدالعزيز الدولي (KAIA): نشر وإدارة لمدة 10 سنوات لنظام DAS متقدم','DAS'],
+ ['ZAIN','السعودية','Smart Cities','أنظمة إنارة ذكية تحسّن كفاءة الطاقة والمراقبة المركزية وتشغيل المدينة','Intelligent lighting'],
+ ['SDAIA','السعودية','AI & HPC Infrastructure','توريد وتركيب كلاستر AI لمشروع Baseer لدعم عمليات المراقبة والأمن','10x H100'],
+ ['ELM','السعودية','AI & HPC Infrastructure','نشر وتكامل بنية AI','L40s'],
  ['TABBY','السعودية','AI & HPC Infrastructure','نشر وتكامل بنية AI','B300 و B200'],
  ['6GAI','السويد','AI & HPC Infrastructure','نشر وتكامل بنية AI و HPC','H200'],
  ['Aleria','الإمارات','AI & HPC Infrastructure','نشر بنية AI و HPC','H200 و GB300'],
- ['TII','الإمارات','AI & HPC Infrastructure','نشر كلاستر GPU عالي الأداء','H100'],
- ['Premier','السعودية','Computer Vision','مراقبة طرق ومرور ذكية بالرؤية الحاسوبية','AI computer vision'],
- ['IoT Squared','السعودية','Computer Vision','نشر وتكامل ومراقبة أنظمة CCTV','AI CV, CCTV'],
- ['TAHAKOM','السعودية','AI & HPC Infrastructure','نشر وتكامل وتحسين بنية AI على الأطراف','AI edge']
+ ['TII','الإمارات','AI & HPC Infrastructure','نشر كلاستر GPU عالي الأداء لبنية AI','H100'],
+ ['Premier','السعودية','Computer Vision','مراقبة طرق وحلول مراقبة مرور ذكية بالذكاء الاصطناعي','AI computer vision'],
+ ['Iot squared','السعودية','Computer Vision','رؤية حاسوبية بالذكاء الاصطناعي؛ نشر وتكامل ومراقبة أنظمة CCTV','AI CV + CCTV'],
+ ['TAHAKOM','السعودية','AI & HPC Infrastructure','نشر وتكامل وتحسين بنية AI على الأطراف من البداية للنهاية','AI edge']
 ];
 var cats = ['الكل'].concat(PRJ.map(function(r){return r[2];}).filter(function(v,i,a){return a.indexOf(v)===i;}));
 
-P.work =
-'<h2>العروض والمشاريع</h2><p class="lead">العروض من الصفحة الرئيسية. المشاريع من صفحة المشاريع وفيها 12 مشروع بدون سنين ولا نتائج.</p>'+
-'<div class="grid">'+
- card({t:'الذكاء الاصطناعي',b:'استشارات [[AI]] · بنية [[AI & HPC]] · [[AI Labs]] · [[AI Factory]] (بتقنيات [[NVIDIA]]) · [[Sovereign AI]] · [[Computer Vision]].',c:'ok',s:['site'],k:'ai labs factory'})+
- card({t:'الاتصالات والـ Edge',b:'أنظمة داخل المباني ([[In-Building]]) · [[Edge Computing]] · حلول لاسلكية.',c:'ok',s:['site']})+
- card({t:'الحلول الذكية',b:'[[IoT]] · المدن الذكية · أنظمة [[ELV]] (التيار الخفيف).',c:'ok',s:['site']})+
- card({t:'حلول تقنية المعلومات',b:'أمن سيبراني · مراقبة ورؤية الشبكات · تخزين.',c:'ok',s:['site']})+
- card({t:'الخدمات',b:'خدمات مُدارة وخدمات شبكات.',c:'ok',s:['site']})+
- card({t:'[[MBUZZ Labs]] و[[AI Factory]]',b:'ظاهرين كأسماء في الموقع بس. مالقيتش تفاصيل مؤكدة عن إيه بالظبط بيقدموه. لو اتسألت، اسألهم إنت.',c:'no',s:['site']})+
-'</div>'+
-'<h3 style="margin:6px 0 10px">المشاريع المعلنة</h3>'+
-'<div class="chips" id="pchips" style="margin-bottom:12px"></div>'+
-'<div class="tablewrap"><table><thead><tr><th>العميل</th><th>الدولة</th><th>الفئة</th><th>النطاق</th><th>التقنية</th></tr></thead><tbody id="prows"></tbody></table></div>'+
-'<p class="note">الصفحة ما فيهاش تواريخ ولا نتائج للمشاريع، وأوصاف STC وGACA وSDAIA مقطوعة في النسخة اللي قرأتها. ما تذكرش سنين. كمان الصفحة الرئيسية بتذكر دراسة حالة عن «مطار سعودي كبير بحوالي 20 مليون مسافر سنويًا»، ما تسمّيش المطار وما تربطش الرقمين ببعض.</p>';
+var P = {};
 
-P.news =
-'<h2>العملاء والشركاء والأخبار</h2><p class="lead">فرق مهم: ظهور شعار عميل في موقعهم مش معناه إن المشروع منشور. المشاريع الموثقة هي الـ12 في القسم السابق.</p>'+
-'<div class="grid">'+
- card({t:'شعارات العملاء',b:'[[PIF]] · [[SDAIA]] · [[HUMAIN]] · [[Tahakom]] · [[STC]] · [[Zain]] · [[GACA]] · [[KAPSARC]] · [[KAUST]] · [[tabby]] · [[elm]] · [[Nokia]] (الأخيرين من صفحة من نحن).',c:'ok',s:['site','about']})+
- card({t:'شركاء التقنية',b:'[[NVIDIA]] · [[Dell]] · [[HPE]] · [[Cisco]] · [[Juniper]] · [[NetApp]] · [[Huawei]] · [[Fortinet]] · [[Palo Alto Networks]] · [[F5]] · [[Bosch]] · [[Hikvision]] · [[Axis]] · [[Red Hat]] · [[VMware]] وغيرهم.',c:'ok',s:['site']})+
- card({t:'توزيع ([[MBUZZ Technologies]])',b:'[[Phison]] (2026) · [[MSI]] · [[Toshiba]] (تخزين ومراقبة في السعودية) · [[Qsan]] (2023). تواريخ [[MSI]] و[[Toshiba]] ما اتأكدتش منها.',c:'ok',s:['phison','msi','tosh','qsan']})+
+/* ---------- HOME ---------- */
+P.home =
+'<div class="hero"><h2>[[MBUZZ]] · مزوّد حلول وخدمات [[AI]] و[[ICT]] من الرياض</h2>'+
+'<p>الشركة بتقدّم نفسها بعبارة «[[Your AI Journey Starts Here]]»: من جاهزية الذكاء الاصطناعي لحد التنفيذ. وبتصف شغلها بإنها بتدمج [[AI]] والابتكار والبنية التحتية لبناء مستقبل أذكى للأعمال والصناعات والمدن. المقر في الرياض، مع مكاتب استراتيجية في الخبر ودبي.</p>'+
+'<div class="src"><a href="https://mbuzz.com/" target="_blank" rel="noopener">الصفحة الرئيسية لموقع الشركة</a></div></div>'+
+'<div class="grid tiles">'+
+ tile({n:'2007',l:'سنة التأسيس',c:'ok',s:['about']})+
+ tile({n:'40+',l:'دولة (بحسب موقع الشركة)',c:'mid',s:['site'],k:'countries'})+
+ tile({n:'500+',l:'خبير (بحسب موقع الشركة)',c:'mid',s:['site','about'],k:'experts'})+
+ tile({n:'50+',l:'شريك استراتيجي (بحسب موقع الشركة)',c:'mid',s:['site'],k:'partners'})+
+ tile({n:'250+',l:'عميل (بحسب موقع الشركة)',c:'mid',s:['site'],k:'clients'})+
+ tile({n:'12',l:'مشروع معلن في صفحة المشاريع',c:'ok',s:['proj']})+
 '</div>'+
-'<h3 style="margin:6px 0 10px">أحدث الأخبار</h3>'+
+'<h3 class="sec">أبرز المشاريع</h3>'+
+'<div class="grid">'+FEAT.map(pcard).join('')+'</div>'+
+'<p class="fnote">6 من أصل 12 مشروع معلن، منقولة من <a href="https://mbuzz.com/projects" target="_blank" rel="noopener">صفحة المشاريع</a> بدون تعديل في الأسماء والتقنيات. باقي المشاريع (STC وZain وELM وTII وPremier وIoT Squared) في قسم «العروض والمشاريع».</p>'+
+'<h3 class="sec">أهم الشركاء</h3>'+
+'<div class="partners it" data-c="ok" data-t="nvidia dell hpe juniper cisco netapp asus huawei fortinet palo alto شركاء">'+
+ ['NVIDIA','Dell','HPE','Juniper','Cisco','NetApp','ASUS','Huawei','Fortinet','Palo Alto Networks'].map(function(n){return '<span class="pchip">'+n+'</span>';}).join('')+'</div>'+
+'<p class="fnote">أول 10 شركاء بترتيب ظهورهم في <a href="https://mbuzz.com/partners" target="_blank" rel="noopener">صفحة الشركاء</a> (الصفحة بتعرض أكتر من 50 شعار).</p>'+
+'<div class="partners it" data-c="ok" data-t="magna ai tawal 6gai شراكات استراتيجية"><span class="pchip strong">Magna AI · شراكة استراتيجية (6 سبتمبر 2026)</span><span class="pchip strong">TAWAL · تمديد شراكة (3 سبتمبر 2026)</span><span class="pchip strong">6G AI Sweden · سحابة AI بتقنيات NVIDIA (إعلان فبراير 2025)</span></div>'+
+'<p class="fnote">شراكات معلنة في قسم الأخبار على موقع الشركة. التفاصيل في قسم «الشركاء والأخبار».</p>'+
+'<h3 class="sec">دراسات حالة منشورة (مارس 2026)</h3>'+
 '<div class="grid">'+
- card({t:'سبتمبر 2026 · [[Magna AI]]',b:'[[Magna AI]] اتأسست بشراكة بين [[Trend Micro]] و[[Wistron Digital Technology Holding]] وبتشتغل بتقنيات [[NVIDIA]]، والرئيس التنفيذي د. معتز بن علي. الشراكة بتغطي من تقييم الجاهزية وخرائط الطريق لحد تصميم البنية وتشغيل مشاريع كبيرة. وصف [[MBUZZ]] في البيان: وجود في السعودية والإمارات والمغرب.',c:'ok',s:['magna','magna2'],k:'المغرب morocco'})+
- card({t:'[[Magna AI]] في [[LEAP 2026]]',b:'ملخص [[Magna AI]] لمشاركتها في [[LEAP 2026]] بيذكر [[MBUZZ]] ضمن ست تعاونات رسمية. ما تحددش أيهم حصل الأول: التوقيع في المعرض ولا الإعلان في سبتمبر.',c:'mid',s:['leap']})+
- card({t:'مايو 2026 · [[Phison]]',b:'[[MBUZZ]] موزّع رسمي لمنتجات [[Pascari]] للتخزين المؤسسي لمراكز البيانات.',c:'ok',s:['phison']})+
- card({t:'سبتمبر 2026 · [[TAWAL]]',b:'الموقع بيقول تمديد شراكة. التغطية اللي لقيتها عن [[TAWAL]] كانت عن شراكات تانية. ما تتكلمش عنها بتفاصيل.',c:'no',s:['site']})+
- card({t:'سمة الموقع',b:'الموقع بيعرض عنوان «[[Your AI Journey Starts Here]]» وزر «[[Explore AI Consulting]]»، ونسخة عربية وإنجليزية. الرسالة الحالية رسالة [[AI]] قبل أي شيء.',c:'ok',s:['site']})+
+ card({t:'Making Connectivity Stronger',b:'عميل بيدير واحد من أكتر المطارات ازدحامًا في السعودية (حوالي 20 مليون مسافر سنويًا). صمّمت [[MBUZZ]] نظام [[Smart DAS]] لتقوية شبكات الجوال والواي فاي، بدعم متعدد الباندات ومتعدد المشغلين ([[STC]] و[[Zain]] و[[Mobily]]) على 2G و3G و4G، وجاهزية لـ 5G، مع مراقبة وإدارة مركزية.',c:'ok',s:['cs1']})+
+ card({t:'Upgrading Business with Technological Innovation',b:'جهة سعودية تابعة لـ [[Tahakom Investment]] حدّثت بيئة مركز الاتصال. نُشرت [[Cisco Finesse]] كمنصة لسطح مكتب الموظف، بدون انقطاع في التشغيل.',c:'ok',s:['cs2']})+
+ card({t:'Data Security through New-Age Technology',b:'تعاون مع مصنّع أجهزة راديو عالمي. طورت [[MBUZZ]] برمجيات أنظمة لأجهزة [[Push-to-Talk over Cellular (PoC)]] لاتصال ثنائي آمن، مع نوعين من الأجهزة: مبتدئ وعالي الأمان.',c:'ok',s:['cs3']})+
+ card({t:'Automation Solution for Business Continuity',b:'شراكة مع مورّد برمجيات لأتمتة عمليات استمرارية الأعمال بنموذج [[SaaS]]، مع صلاحيات بالأدوار ([[RBAC]]) ودليل أعمال موحّد.',c:'ok',s:['cs4']})+
+'</div>'+
+'<h3 class="sec">آخر الأخبار</h3>'+
+'<div class="grid">'+
+ card({t:'6 سبتمبر 2026 · [[Magna AI]]',b:'توقيع شراكة استراتيجية مع [[Magna AI]] (المدعومة بتقنيات [[NVIDIA]]) لتسريع تبني [[AI]] المؤسسي ودمجه وتوسيعه في الشرق الأوسط وأفريقيا.',c:'ok',s:['nMagna','magna']})+
+ card({t:'3 سبتمبر 2026 · [[TAWAL]]',b:'إعلان تمديد الشراكة القائمة مع [[TAWAL]] في التقنية والاتصالات والبنية الرقمية.',c:'ok',s:['nTawal']})+
+ card({t:'فبراير 2025 · [[6G AI Sweden]]',b:'إطلاق سحابة [[AI]] بتقنيات [[NVIDIA]] في السويد. الاتفاقية اتوقّعت في [[GITEX]] دبي يوم 14 أكتوبر قبل إعلان فبراير.',c:'ok',s:['nG6','g6']})+
 '</div>';
 
-P.market =
-'<h2>السوق والفرص</h2><p class="lead">الجزء الأول سياق موثق. الجزء التاني رأيي أنا من قراءة موقعهم، وده مش حقايق منشورة.</p>'+
-'<div class="grid">'+
- card({t:'السعودية بتبني بنية [[AI]] ضخمة',b:'[[HUMAIN]] (مملوكة لـ [[PIF]]) أعلنت مع [[NVIDIA]] مصانع [[AI]] بقدرة تصل 500 ميجاوات، تبدأ بـ 18 ألف [[GB300]]. و[[NVIDIA]] مع [[SDAIA]] هينشروا لحد 5 آلاف [[Blackwell GPU]] لمصنع [[AI]] سيادي. ده اللي بيخلق الطلب اللي [[MBUZZ]] بتشتغل حواليه.',c:'ok',s:['nv']})+
- card({t:'ادعاء [[IDC]] في بيان [[Magna AI]]',b:'البيان بينسب لـ [[IDC]] إن الشرق الأوسط وأفريقيا أسرع منطقة نموًا في الاستثمار في بنية [[AI]]. هو ادعاء من بيان شركة، فانسبه لـ«بيان Magna AI».',c:'mid',s:['magna']})+
- card({t:'يعني إيه [[Sovereign AI]]',b:'معرفة عامة مني: إن بيانات ونماذج وبنية الذكاء الاصطناعي تفضل داخل حدود الدولة وتحت سيطرتها. [[Magna AI]] نفسها بتقدّم نفسها بعبارة «[[Own Your Intelligence]]».',c:'op',s:['leap']})+
+/* ---------- COMPANY ---------- */
+P.company =
+'<h2>الشركة والخط الزمني</h2><p class="lead">التواريخ مصدرها موقع الشركة أو بيانات صحفية. المصنّف «بحذر» مصدره خارجي أو ادعاء من الشركة.</p>'+
+'<div class="tl">'+
+ ev({y:'2007',t:'التأسيس',b:'اتأسست كشركة خاصة تحت اسم [[Mobile Business Company]] وكان تركيزها على التجارة عبر الموبايل ومنصات الإعلان.',c:'ok',s:['about']})+
+ ev({y:'2011',t:'بداية مشاريع [[DAS]] للاتصالات',b:'صفحة من نحن بتذكر مشاريع [[DAS]] للاتصالات من 2011 وما بعدها.',c:'ok',s:['about']})+
+ ev({y:'2016–2017',t:'برج الساعة بمكة ومطار الملك عبدالعزيز',b:'محطات في تاريخهم: [[Makkah Clock Tower]] سنة 2016 ومطار الملك عبدالعزيز الدولي سنة 2017.',c:'ok',s:['about']})+
+ ev({y:'2022',t:'شركة مساهمة',b:'تحولت لشركة مساهمة.',c:'ok',s:['about']})+
+ ev({y:'2022',t:'تمويل نمو',b:'قواعد بيانات خارجية بتذكر تمويل نمو بمبلغ غير معلن بقيادة [[Tech Invest Com]].',c:'mid',s:['preqin','cb']})+
+ ev({y:'31 أكتوبر 2022',t:'[[Vembu]] و[[Edgecore]]',b:'خبران على موقعهم بنفس التاريخ: [[Vembu]] (نسخ احتياطي واسترجاع الكوارث) أعلنت شراكة مع [[MBUZZ Technologies]]، و[[Edgecore Networks]] عيّنت [[MBUZZ]] موزّعًا بقيمة مضافة للشرق الأوسط وأفريقيا.',c:'ok',s:['nVembu','nEdge']})+
+ ev({y:'أكتوبر 2023',t:'شراكة [[Qsan]]',b:'[[MBUZZ Technologies]] أعلنت شراكة مع [[Qsan]] لحلول التخزين للشرق الأوسط وأفريقيا.',c:'ok',s:['qsan']})+
+ ev({y:'أكتوبر 2023',t:'تصريح عن «أكبر مركز ذكاء اصطناعي»',b:'رئيس مجلس الإدارة قال على قناة الإخبارية إن اتفاقية كبرى اتوقعت لبناء أكبر مركز ذكاء اصطناعي في المملكة. الطرف الثاني وحجم الصفقة مش معروفين.',c:'no',s:['chair']})+
+ ev({y:'14 أكتوبر · فبراير 2025',t:'سحابة [[AI]] مع [[6G AI Sweden]]',b:'الاتفاقية اتوقّعت يوم 14 أكتوبر في [[GITEX]] دبي، وبيان فبراير 2025 أعلن إطلاق سحابة [[AI]] بتقنيات [[NVIDIA]] في السويد.',c:'ok',s:['nG6','g6']})+
+ ev({y:'مارس 2026',t:'نشر 4 دراسات حالة',b:'الموقع بيعرض 4 دراسات حالة بتاريخ 4 و5 مارس 2026: المطار، والجهة التابعة لـ [[Tahakom]]، وأمن الاتصالات، واستمرارية الأعمال.',c:'ok',s:['cs']})+
+ ev({y:'مايو 2026',t:'موزّع رسمي لـ [[Phison]]',b:'تعيين كموزّع رسمي لحلول التخزين [[Pascari]] في الإمارات والسعودية وغيرها (الخبر مقطوع في النسخة اللي قرأتها).',c:'ok',s:['phison']})+
+ ev({y:'2026',t:'نشر كلاستر [[NVIDIA GB300]]',b:'ذُكر في صفحة من نحن كإنجاز حديث. مفيش تفاصيل عن العميل أو الحجم.',c:'mid',s:['about']})+
+ ev({y:'3 سبتمبر 2026',t:'تمديد شراكة [[TAWAL]]',b:'خبر رسمي على موقعهم عن تمديد الشراكة القائمة في التقنية والاتصالات والبنية الرقمية. ملقيتش تغطية صحفية مستقلة ليه.',c:'ok',s:['nTawal'],n:'قول «أعلنتم على موقعكم تمديد الشراكة مع TAWAL». ما تضيفش تفاصيل ما ذُكرتش.'})+
+ ev({y:'6 سبتمبر 2026',t:'شراكة [[Magna AI]]',b:'عنوان الخبر على موقعهم «[[MoU]]» والنص بيقول توقيع اتفاقية شراكة استراتيجية. [[Magna AI]] اتأسست بشراكة بين [[Trend Micro]] و[[Wistron Digital Technology Holding]] وبتشتغل بتقنيات [[NVIDIA]].',c:'ok',s:['nMagna','magna','magna2'],n:'قول «شراكة استراتيجية مع Magna AI».'})+
 '</div>'+
-'<h3 style="margin:6px 0 10px">فرص أشوفها من موقعهم (رأيي)</h3>'+
+'<h2>القيادة</h2><p class="lead">الأسماء من بيانات صحفية، مش من موقعهم (صفحة من نحن مفيهاش أسماء).</p>'+
 '<div class="grid">'+
- card({t:'مفيش دراسات حالة منشورة',b:'صفحة المشاريع بدون سنين ولا نتائج، وصفحة دراسات الحالة فاضية في النسخة اللي قرأتها. مشاريع زي [[Baseer]] لـ [[SDAIA]] وكلاسترات [[tabby]] و[[Aleria]] ممكن تتحول لقصص.',c:'op',s:['proj']})+
- card({t:'مفيش محتوى ولا مدونة',b:'الموقع بدون مدونة. مع شراكة [[Magna AI]] واتجاه الاستشارات، المحتوى التعليمي عن [[AI]] المؤسسي ممكن يكون قناة ثقة قوية لعملاء بيع طويل.',c:'op',s:['site']})+
- card({t:'الوظايف بدون أدوار تسويق أو ويب',b:'صفحة الوظايف بتعرض مسار تدريب وخريجين وبدون مناصب مفتوحة. يعني الدور ممكن يكون جديد أو مرتبط بتوسع بيحصل دلوقتي.',c:'op',s:['car']})+
- card({t:'هويتين محتاجين ربط',b:'[[MBUZZ]] و[[MBUZZ Technologies]] في موقعين منفصلين. ممكن يكون في فرصة لتوحيد الرسالة والتجربة.',c:'op',s:['site']})+
- card({t:'العدادات بتظهر صفر',b:'في النسخة اللي قرأتها، عدادات الأرقام في صفحة من نحن بتعرض 0. ممكن يكون سبب تقني بسيط. لو اتكلمت عنها، اتكلم بلطف وكاقتراح تحسين، مش كعيب.',c:'op',s:['about']})+
+ card({t:'[[Fawwaz Alshammari]] · المدير العام',b:'ظهر كـ [[Managing Director]] في بيان [[Magna AI]] (سبتمبر 2026). مصدر قديم كتبه [[CEO]].',c:'ok',s:['magna','cbt'],k:'فواز الشمري',n:'تأكد من المنصب على لينكدإن قبل ما تناديه به.'})+
+ card({t:'م. [[Nawaf Al-Shammari]] · رئيس مجلس الإدارة',b:'ظهر بهذا المنصب في تصريح أكتوبر 2023 وفي خبر [[6GAI]] (فبراير 2025).',c:'ok',s:['chair','g6'],k:'نواف الشمري'})+
+ card({t:'[[Sabir Saleem]] · [[MBUZZ Technologies]]',b:'ظهر كـ [[CEO]] لذراع التوزيع في خبر [[Qsan]] (أكتوبر 2023).',c:'mid',s:['qsan'],n:'مش متأكد إنه لسه في المنصب. ما تذكرهوش.',m:0})+
 '</div>'+
-'<p class="note">طريقة الصياغة في الانترفيو: «لاحظت إن في فرصة لإبراز مشاريعكم أكتر في الموقع، وكنت متحمس أفكر معاكم في ده»، بدل «موقعكم ناقص كذا».</p>';
+'<h2>الحجم والتمويل</h2>'+
+'<div class="grid">'+
+ card({t:'الأرقام اللي الشركة بتعلنها',b:'موقعهم بيعرض: 40+ دولة، 500+ خبير، 50+ شريك استراتيجي، 250+ عميل. [[Crunchbase]] بيصنّف الشركة 251 إلى 500 موظف.',c:'mid',s:['site','cb'],n:'قول «بحسب موقعكم». الرقمين (500+ و251–500) مختلفين.'})+
+ card({t:'التمويل',b:'جولة نمو واحدة سنة 2022 بقيادة [[Tech Invest Com]]. المبلغ غير معلن.',c:'mid',s:['preqin','cb']})+
+ card({t:'الإيرادات',b:'ملقيتش رقم موثوق.',c:'no',s:[]})+
+'</div>';
 
+/* ---------- WORK ---------- */
+P.work =
+'<h2>العروض والمشاريع</h2><p class="lead">العروض الـ7 الأساسية منقولة من الصفحة الرئيسية. المشاريع من صفحة المشاريع (12 مشروع، بدون سنين).</p>'+
+'<div class="grid">'+
+ card({t:'Smart & Connected Solutions',b:'حلول [[IoT]] و[[ELV]] والمدن الذكية اللي بتربط البيئات الفعلية وتشغّلها بالبيانات.',c:'ok',s:['site']})+
+ card({t:'Managed Services & Operations',b:'مراقبة وإدارة وتحسين استباقي لضمان الاعتمادية والأداء واستمرارية التشغيل.',c:'ok',s:['site']})+
+ card({t:'IT & Systems Integration',b:'دمج التقنيات والمنصات والبنية في أنظمة موحدة وكفؤة وجاهزة للمستقبل.',c:'ok',s:['site']})+
+ card({t:'Cybersecurity & Digital Resilience',b:'حماية شاملة ورؤية واستمرارية للأصول الرقمية والعمليات الحرجة.',c:'ok',s:['site']})+
+ card({t:'AI & Emerging Tech',b:'[[AI]] ورؤية حاسوبية وتحليلات متقدمة تحوّل البيانات لمعلومات قابلة للتنفيذ.',c:'ok',s:['site']})+
+ card({t:'Telecom & Connectivity',b:'بنية اتصالات وألياف ولاسلكي و[[Edge]] بمستوى مشغّلي الاتصالات لاتصال عالي الاعتمادية.',c:'ok',s:['site']})+
+ card({t:'Consulting & Support',b:'إرشاد استراتيجي ودعم خبراء لتخطيط وتنفيذ مبادرات التحول الرقمي.',c:'ok',s:['site']})+
+ card({t:'[[MBUZZ Labs]] و[[AI Factory]]',b:'ظاهرين كأسماء في الموقع بس. مالقيتش تفاصيل مؤكدة عن إيه بالظبط بيقدموه.',c:'no',s:['site']})+
+'</div>'+
+'<h3 class="sec">المشاريع المعلنة (12)</h3>'+
+'<div class="chips" id="pchips" style="margin-bottom:12px"></div>'+
+'<div class="tablewrap"><table><thead><tr><th>العميل</th><th>الدولة</th><th>الفئة</th><th>النطاق</th><th>التقنية</th></tr></thead><tbody id="prows"></tbody></table></div>'+
+'<p class="note">المصدر: <a href="https://mbuzz.com/projects" target="_blank" rel="noopener">صفحة المشاريع</a>. الصفحة ما فيهاش تواريخ، وأوصاف STC وGACA وSDAIA مقطوعة في الموقع نفسه.</p>'+
+'<div class="mine"><p class="note" style="color:var(--mid)">ما تذكرش سنين المشاريع. وما تربطش دراسة حالة المطار (المسمى «عميل مطار») بمشروع GACA في المطار، لأن الموقع ما بيربطهم صراحة.</p></div>';
+
+/* ---------- NEWS ---------- */
+P.news =
+'<h2>العملاء والشركاء والأخبار</h2><p class="lead">فرق مهم: ظهور شعار عميل في موقعهم مش معناه إن في مشروع منشور له. المشاريع الموثقة هي الـ12 في قسم «العروض والمشاريع».</p>'+
+'<div class="grid">'+
+ card({t:'شعارات العملاء على الصفحة الرئيسية',b:'[[Zain]] · [[TAWAL]] · [[STC]] · [[GACA]] · [[KAPSARC]] · [[PIF]] · [[SDAIA]] · [[HUMAIN]] · [[Tahakom]] · [[elm]] · [[KAUST]] · [[Aleria]] · [[tabby]] · [[Nokia]] · [[Ericsson]] · [[Huawei]] وغيرهم (شعارات أخرى مش واضحة الأسماء).',c:'ok',s:['site']})+
+ card({t:'شركاء التقنية (صفحة الشركاء)',b:'[[NVIDIA]] · [[Dell]] · [[HPE]] · [[Juniper]] · [[Cisco]] · [[NetApp]] · [[ASUS]] · [[Huawei]] · [[Fortinet]] · [[Palo Alto]] · [[Infoblox]] · [[F5]] · [[A10]] · [[Viavi]] · [[Axis]] · [[Hikvision]] · [[Hanwha]] · [[Bosch]] · [[Cloudera]] · [[Red Hat]] · [[VMware]] · [[Keysight]] وغيرهم. الصفحة بتعرض أكتر من 50 شعار.',c:'ok',s:['part'],n:'في شعار اسمه في كود الصفحة «Super» ما أكدتش هويته، فمتذكرهوش.'})+
+ card({t:'توزيع',b:'[[Phison]] (2026) · [[MSI]] · [[Toshiba]] (تخزين ومراقبة في السعودية) · [[Qsan]] (2023) · [[Edgecore]] (2022) · [[Vembu]] (2022). تواريخ [[MSI]] و[[Toshiba]] مش مؤكدة.',c:'ok',s:['phison','msi','tosh','qsan','nEdge','nVembu']})+
+'</div>'+
+'<h3 class="sec">الأخبار بالترتيب</h3>'+
+'<div class="grid">'+
+ card({t:'6 سبتمبر 2026 · [[Magna AI]]',b:'اتفاقية شراكة استراتيجية لتسريع تبني [[AI]] المؤسسي في الشرق الأوسط وأفريقيا. تشمل مساعدة الشركات في تصميم بنية [[AI]] ومنصات [[AI]] آمنة وتطبيقات قطاعية، مدعومة بأمن [[AI]] وبرامج تطوير مهارات. [[Magna AI]] اتأسست بشراكة بين [[Trend Micro]] و[[Wistron Digital Technology Holding]]، والرئيس التنفيذي د. معتز بن علي. التغطية الصحفية بتصف [[MBUZZ]] بوجود في السعودية والإمارات والمغرب.',c:'ok',s:['nMagna','magna','magna2']})+
+ card({t:'[[Magna AI]] في [[LEAP 2026]]',b:'ملخص [[Magna AI]] لمشاركتها في [[LEAP 2026]] بيذكر [[MBUZZ]] ضمن ست تعاونات رسمية.',c:'mid',s:['leap'],n:'ما تحددش أيهم حصل الأول: التوقيع في المعرض ولا الإعلان في سبتمبر.'})+
+ card({t:'3 سبتمبر 2026 · [[TAWAL]]',b:'إعلان تمديد الشراكة مع [[TAWAL]] في التقنية والاتصالات والبنية الرقمية.',c:'ok',s:['nTawal']})+
+ card({t:'مايو 2026 · [[Phison]]',b:'[[MBUZZ]] موزّع رسمي لمنتجات [[Pascari]] للتخزين المؤسسي لمراكز البيانات.',c:'ok',s:['phison']})+
+ card({t:'فبراير 2025 · [[6G AI Sweden]]',b:'سحابة [[AI]] بتقنيات [[NVIDIA]] في السويد. الاتفاقية اتوقعت في [[GITEX]] دبي يوم 14 أكتوبر قبل الإعلان.',c:'ok',s:['nG6','g6']})+
+'</div>';
+
+/* ---------- MARKET ---------- */
+P.market =
+'<h2>السوق والفرص</h2><p class="lead">الجزء الأول سياق موثق. الجزء التاني آراء مني من قراءة موقعهم، مش حقايق منشورة.</p>'+
+'<div class="grid">'+
+ card({t:'السعودية بتبني بنية [[AI]] ضخمة',b:'[[HUMAIN]] (مملوكة لـ [[PIF]]) أعلنت مع [[NVIDIA]] مصانع [[AI]] بقدرة تصل 500 ميجاوات. و[[NVIDIA]] مع [[SDAIA]] هينشروا لحد 5 آلاف [[Blackwell GPU]] لمصنع [[AI]] سيادي. ده من العوامل اللي بتخلق الطلب في السوق اللي [[MBUZZ]] بتشتغل فيه.',c:'ok',s:['nv']})+
+ card({t:'ادعاء [[IDC]] في بيان [[Magna AI]]',b:'البيان بينسب لـ [[IDC]] إن الشرق الأوسط وأفريقيا أسرع منطقة نموًا في الاستثمار في بنية [[AI]].',c:'mid',s:['magna'],n:'انسبه لـ«بيان Magna AI»، مش حقيقة مستقلة.'})+
+ card({t:'يعني إيه [[Sovereign AI]]',b:'معرفة عامة مني: إن بيانات ونماذج وبنية الذكاء الاصطناعي تفضل داخل حدود الدولة وتحت سيطرتها. [[Sovereign AI]] مذكور كعرض في موقع [[MBUZZ]].',c:'op',s:['leap']})+
+'</div>'+
+'<div class="mine"><h3 class="sec">فرص أشوفها من موقعهم (رأيي)</h3></div>'+
+'<div class="grid">'+
+ card({t:'دراسات الحالة بدون أسماء والمشاريع بدون نتائج',b:'دراسات الحالة الأربعة بتتكلم عن «العميل» بدون اسم وبنتائج. وصفحة المشاريع بتعرض أسماء العملاء والتقنيات بدون نتائج ولا سنين. الربط بينهم ممكن يحوّل مشاريع زي [[Baseer]] و[[tabby]] و[[Aleria]] لقصص كاملة.',c:'op',m:1,s:['cs','proj']})+
+ card({t:'رسالة [[AI]] جديدة محتاجة محتوى يشرحها',b:'الصفحة الرئيسية بتقول «[[Your AI Journey Starts Here]]» وشراكة [[Magna AI]] جديدة (سبتمبر 2026). لو في محتوى بيشرح رحلة تبني [[AI]] المؤسسي للعميل، مالقيتوش في الصفحات اللي قرأتها.',c:'op',m:1,s:['site'],n:'اسأل عنه بدل ما تقوله كعيب.'})+
+ card({t:'هويتين محتاجين ربط',b:'[[MBUZZ]] و[[MBUZZ Technologies]] في موقعين منفصلين، والموقع الرئيسي بيعرض التاني ضمن «Ecosystem».',c:'op',m:1,s:['site']})+
+ card({t:'الوظايف',b:'صفحة الوظايف بتعرض مسار تدريب وخريجين وبدون مناصب مفتوحة محددة. لذلك تواصلهم معاك على تخصصات بدل مسمى وظيفي منطقي.',c:'op',m:1,s:['car']})+
+'</div>'+
+'<div class="mine"><p class="note">طريقة الصياغة في الانترفيو: «لاحظت إن في فرصة نربط فيها المشاريع المسماة بدراسات الحالة، وكنت متحمس أفكر معاكم في ده»، بدل «ناقص كذا».</p></div>';
+
+/* ---------- ME ---------- */
+P.me =
+'<h2>خبرتي مع <bdi class="en" dir="ltr">MBUZZ</bdi></h2><p class="lead">الشركة تواصلت معاك على 4 تخصصات من غير مسمى. كل بطاقة بتربط تخصصك بحاجة موثقة من الشركة وبسؤال تسأله.</p>'+
+'<div class="pitch"><h2>جملة التعريف (30 ثانية)</h2>'+
+'<p id="pitch">تخصصي نظم معلومات، وبدأت بخلفية في برمجة المواقع، وبعدها اشتغلت [[Odoo Functional Consultant]] على المخازن والمشتريات والمبيعات والـ [[CRM]] والموقع والتجارة الإلكترونية والـ [[POS]] والمحاسبة. وكمان بشتغل في الـ [[Media Buying]]، وبستخدم الذكاء الاصطناعي يوميًا وبحوّله لـ [[agents]] بتنفذ المهام اللي بتاخد وقت، علشان أركّز على الأهداف الكبيرة. يعني بجمع بين فهم الأعمال والتقنية والنمو.</p>'+
+'<p style="font-size:14px;color:var(--muted)">أضف جملة عن شغلك الحالي بالصيغة اللي تريحك لو حبيت.</p>'+
+'<button class="btn" id="copyPitch" type="button">نسخ الجملة</button> <span id="copyMsg" style="font-size:13px;color:var(--ok)"></span></div>'+
+'<div class="grid">'+
+ card({t:'الذكاء الاصطناعي',c:'op',m:1,b:'عندك: استخدام يومي، وبتبني بيه مواقع، وبتأتمت مهام متكررة، وبتعمل بحث وتقارير. عندهم: عرض «[[AI & Emerging Tech]]» وعرض «[[Consulting & Support]]»، وشراكة [[Magna AI]] اللي هدفها نقل [[AI]] من التجربة للتشغيل.',s:['site','nMagna'],n:'اسأل: في استخدام لـ AI agents داخل عملياتكم أو مع العملاء؟'})+
+ card({t:'الويب',c:'op',m:1,b:'عندك: خبرة برمجة مواقع وموقع وتجارة إلكترونية في [[Odoo]]. عندهم: موقع بنسختين عربي وإنجليزي، وأقسام [[Case Studies]] و[[Media]] وصفحة مشاريع، وموقع منفصل لـ [[MBUZZ Technologies]].',s:['site','cs'],n:'اسأل: مين بيدير الموقعين حاليًا، وفريق داخلي ولا خارجي؟'})+
+ card({t:'الـ [[ERP]]',c:'op',m:1,b:'عندك: [[Odoo]] (المخازن والمشتريات، المبيعات والـ [[CRM]]، الموقع والتجارة الإلكترونية، الـ [[POS]]، المحاسبة). عندهم: عرض «[[IT & Systems Integration]]» ودراسة حالة أتمتة استمرارية الأعمال بنموذج [[SaaS]]. مالقيتش في الصفحات اللي قرأتها عرض [[ERP]] صريح.',s:['site','cs4'],n:'اسأل: هل [[ERP]] مطلوب داخليًا ولا كخدمة للعملاء؟ ما تفترضش.'})+
+ card({t:'الـ [[Media Buying]]',c:'op',m:1,b:'عندك: خبرة في شراء الإعلانات. عندهم: قسم أخبار وفعاليات، وحضور في جايتكس حسب خبر [[6GAI]]، وأرقام عملاء وشركاء بيعرضوها في الصفحة الرئيسية. جمهورهم [[B2B]] وقرارات الشراء بتاخد وقت.',s:['site','nG6'],n:'اسأل: القنوات اللي بتجيب [[Leads]] دلوقتي إيه، وفي ميزانية إعلانات؟'})+
+'</div>'+
+'<div class="box check"><h3>قبل الساعة 3</h3><div id="checklist"></div></div>'+
+'<h3 class="sec" style="margin-top:22px">ورقة أرقامي</h3>'+
+'<p class="note">اكتب هنا أرقامك وأمثلتك الحقيقية علشان تحفظها قبل الانترفيو. بتتحفظ في متصفحك على الجهاز ده بس.</p>'+
+'<div class="pad" id="pad"></div>';
+
+/* ---------- QA ---------- */
 var QA = [
  {q:'عرّفنا بنفسك',
-  a:'أشارك في إدارة وكالة [[Magmafy]] اللي بتقدّم حلول رقمية: تطوير مواقع (شركات وتجارة إلكترونية وأنظمة [[CRM]] مخصصة) وتسويق رقمي وإدارة إعلانات. [أضف هنا جملة أو اتنين عن شغلك مع العملاء، بحسب الدور اللي متقدم له]. وبشوف إن [[MBUZZ]] مكان بيجمع مشاريع كبيرة وتقنية متقدمة، وده اللي يخليني متحمس.',
-  f:['مرتكز على خلفيتك: شريك في [[Magmafy]]، تطوير ويب وتسويق رقمي وإعلانات.','عدّل الجملة الأخيرة بعد ما تعرف الدور بالظبط.'],
-  w:'لو الدور مش في الويب أو التسويق، غيّر التركيز لباقي خبرتك.'},
+  a:'تخصصي نظم معلومات، وبدأت بخلفية في برمجة المواقع، وبعدها اشتغلت [[Odoo Functional Consultant]] على المخازن والمشتريات والمبيعات والـ [[CRM]] والموقع والتجارة الإلكترونية والـ [[POS]] والمحاسبة. وكمان بشتغل في الـ [[Media Buying]]، وبستخدم الذكاء الاصطناعي يوميًا وبحوّله لـ [[agents]] بتنفذ المهام اللي بتاخد وقت، علشان أركّز على الأهداف الكبيرة.',
+  f:['ده كل اللي ذكرته عن نفسك. أضف أرقام حقيقية فقط (سنين خبرة، عدد مشاريع).'],
+  e:'I studied Information Systems and started in web development. Then I worked as an Odoo Functional Consultant across Inventory, Purchase, Sales and CRM, Website and eCommerce, POS and Accounting. I also work in media buying, and I use AI every day, building agents that handle the time-consuming work so I can focus on high-impact goals.'},
  {q:'إيه اللي تعرفه عن [[MBUZZ]]؟',
-  a:'بحسب موقعكم، الشركة اتأسست سنة 2007 وكان تركيزها وقتها على الموبايل والإعلان، وبعدها اتحولت لمزوّد حلول [[AI]] و[[ICT]] من الرياض، ومعاكم مكاتب في الخبر ودبي. لاحظت مشاريعكم في بنية [[AI]] زي كلاستر [[H100]] لمشروع [[Baseer]] لـ [[SDAIA]] وكلاسترات لتابي، وتغطية [[DAS]] في مطار الملك عبدالعزيز. وآخر حاجة قريتها شراكتكم مع [[Magna AI]] لنقل مشاريع الذكاء الاصطناعي لمرحلة التشغيل.',
-  f:['2007 تأسيس · 2022 مساهمة · الرياض والخبر ودبي','كلاستر [[10× H100]] لـ [[SDAIA]] ([[Baseer]]) من صفحة المشاريع','[[Magna AI]] سبتمبر 2026'],
-  e:'From your website, MBUZZ was founded in 2007 around mobile and advertising and has become an AI and ICT solutions provider headquartered in Riyadh, with offices in Al Khobar and Dubai. I noticed your AI infrastructure projects, such as the H100 cluster for SDAIA\'s Baseer project, and your recent partnership with Magna AI to help enterprises move AI from pilot to production.',
-  w:'ما تقولش الأرقام (500 خبير، 40 دولة) كحقايق. قولها «بحسب موقعكم».'},
+  a:'بحسب موقعكم، الشركة اتأسست سنة 2007 وكان تركيزها على الموبايل والإعلان، وبقت مزوّد حلول [[AI]] و[[ICT]] من الرياض، ومعاكم مكاتب في الخبر ودبي. لاحظت مشاريعكم في بنية [[AI]]: كلاستر [[10x H100]] لمشروع [[Baseer]] لـ [[SDAIA]]، وكلاسترات [[B300]] و[[B200]] لتابي، و[[H200]] و[[GB300]] لـ [[Aleria]]. وفي الاتصالات نظام [[DAS]] في مطار الملك عبدالعزيز. وآخر شراكة قريتها مع [[Magna AI]] لنقل مشاريع الذكاء الاصطناعي للتشغيل الفعلي.',
+  f:['2007 تأسيس · 2022 مساهمة · الرياض والخبر ودبي','[[10x H100]] لـ [[SDAIA]] ([[Baseer]]) من صفحة المشاريع','[[Magna AI]] 6 سبتمبر 2026 · [[TAWAL]] 3 سبتمبر 2026','4 دراسات حالة منشورة في مارس 2026'],
+  e:'From your website, MBUZZ was founded in 2007 around mobile and advertising and is now an AI and ICT solutions provider headquartered in Riyadh, with offices in Al Khobar and Dubai. I noticed projects like the H100 cluster for SDAIA\'s Baseer project and the GPU clusters for tabby and Aleria, plus your recent strategic partnership with Magna AI to move enterprise AI from pilot to production.',
+  w:'الأرقام (40+ دولة، 500+ خبير، 50+ شريك، 250+ عميل) قولها «بحسب موقعكم».'},
+ {q:'إيه تخصصك بالظبط؟',
+  a:'عندي أربع مجالات بتتقاطع: الـ [[AI]] والويب والـ [[ERP]] والـ [[Media Buying]]. قوتي إني بفهم الرحلة كلها: من الإعلان اللي بيجيب العميل، للموقع، للنظام اللي بيدير العملية، ومعاهم الأتمتة بالـ [[AI]]. تواصلتوا معايا بخصوص المجالات دي، فحابب أفهم إيه الأولوية عندكم علشان أركّز عليها.',
+  f:['السؤال الأخير مهم لأنك مقدمتش على مسمى. ده بيحوّل الانترفيو لحوار عن احتياجهم.'],
+  e:'I work across four areas that connect: AI, web, ERP and media buying. My strength is seeing the full journey, from the ad that brings the customer in, to the website, to the system that runs the process, with AI automation tying it together. You reached out about these areas, so I\'d love to understand which one is the top priority for you.'},
+ {q:'إزاي بتستخدم الـ [[AI]] في شغلك؟',
+  a:'يوميًا في تلات حاجات: برمجة وبناء مواقع، وأتمتة مهام متكررة، وبحث وتحليل وتقارير. بخلّي الـ [[AI]] ينفذ، وأنا بحدد الهدف وبراجع النتيجة. وبتابع الجديد فيه باستمرار وبجرّبه على شغل حقيقي. [أضف مثال حقيقي: مهمة كانت بتاخد كذا ساعة بقت كذا].',
+  f:['ده يتوافق مع رسالة [[Magna AI]]: نقل [[AI]] من التجربة للتشغيل.','موقعهم بيعرض «[[AI Consulting]]» كعرض.'],
+  w:'قول إنك بتراجع النتائج. ده بيبيّن نضج في استخدام الـ AI.',
+  e:'I use AI daily for three things: building websites and code, automating repetitive tasks, and research and reporting. I set the goal and let AI execute, and I review the output. I keep testing new tools on real work.'},
+ {q:'إيه خبرتك في [[Odoo]]؟',
+  a:'اشتغلت [[Functional Consultant]] على المخازن والمشتريات، والمبيعات والـ [[CRM]]، والموقع والتجارة الإلكترونية، والـ [[POS]]، والمحاسبة. شغلي كان ترجمة احتياج الأعمال لإعدادات النظام وربط الوحدات ببعضها. [عدّل بحسب شغلك الفعلي وأضف مثال مشروع].',
+  f:['الوحدات اللي ذكرتها: Inventory/Purchase، Sales/CRM، Website/eCommerce، POS، Accounting.'],
+  w:'ما فيش في موقعهم عرض ERP صريح. اسأل هل ERP مطلوب وفين، ولا تفترض.'},
  {q:'ليه عايز تشتغل معنا؟',
-  a:'لأن [[MBUZZ]] في نقطة مهمة: السعودية بتبني بنية [[AI]] ضخمة، وانتوا مش بتتفرجوا، انتوا بتنفذوا مشاريع فعلية مع [[SDAIA]] وتابي وغيرهم. أنا شغلي في الويب والتسويق، وشايف إن قصتكم التقنية قوية ومحتاجة تتحكي للعميل بشكل أوضح، وده اللي أقدر أضيف فيه.',
-  f:['السياق: [[HUMAIN]] مع [[NVIDIA]] لـ 500 ميجاوات من مصانع [[AI]] (بيان [[NVIDIA]])'],
-  e:'Saudi Arabia is building AI infrastructure at scale, and MBUZZ is actually delivering it, from GPU clusters to smart infrastructure. My background is in web and digital marketing, and I see a real opportunity to tell that technical story more clearly to your customers.'},
- {q:'رأيك في موقعنا وحضورنا الرقمي؟',
-  a:'الموقع واضح في تقديم عروضكم وشركائكم وعملائكم، وفي رسالة [[AI]] قوية في أول الصفحة. وشايف فرصة إن مشاريعكم المهمة، زي كلاسترات [[GPU]] وتغطية المطارات، تتحكي كدراسات حالة بنتائج. وكمان إن الهويتين، [[MBUZZ]] و[[MBUZZ Technologies]]، يتربطوا بتجربة أوضح للزائر.',
-  f:['صفحة المشاريع بدون سنين ولا نتائج','لا توجد مدونة','موقعين منفصلين'],
-  w:'قدّم الملاحظات كفرص. ما تقولش «ناقص» أو «ضعيف».'},
+  a:'التواصل جاء عن طريق علاقات مشتركة، وبعد ما بحثت عنكم لقيت [[MBUZZ]] في لحظة مهمة: [[AI]] وبنية تحتية، وشراكة جديدة مع [[Magna AI]]، وشغل مع جهات كبيرة. وأنا أقدر أضيف في الطبقة اللي بتوصّل التقنية للعميل: ويب وأتمتة وأنظمة ونمو.',
+  f:['السياق: [[HUMAIN]] مع [[NVIDIA]] لـ 500 ميجاوات من مصانع [[AI]] (بيان [[NVIDIA]]).'],
+  e:'MBUZZ is at an important moment: AI infrastructure, a new partnership with Magna AI, and work with major organizations. I can add value in the layer that brings the technology to the customer: web, automation, systems and growth.'},
+ {q:'رأيك في موقعنا؟',
+  a:'الموقع بنسختين عربي وإنجليزي، ورسالته [[AI]] واضحة من أول الصفحة، وفيه دراسات حالة وأخبار وفعاليات. لاحظت فرصة إن دراسات الحالة (بدون أسماء عملاء) تتربط بصفحة المشاريع (بأسماء وتقنيات بدون نتائج)، علشان القصة تكتمل للزائر.',
+  f:['4 دراسات حالة منشورة في مارس 2026، كلها بصيغة «العميل».','صفحة المشاريع: 12 مشروع بأسماء وتقنيات، بدون سنين.'],
+  w:'قدّم الملاحظة كفرصة. ما قيّمتش أداء الموقع ولا سرعته، فما تقولش حاجة عن ده.'},
  {q:'إيه الفرق بين [[MBUZZ]] و[[MBUZZ Technologies]]؟',
-  a:'حسب فهمي، [[MBUZZ]] هي الواجهة اللي بتقدّم الحلول والخدمات، و[[MBUZZ Technologies]] ذراع التوزيع اللي بيوزّع منتجات شركات عالمية زي [[Phison]] و[[Toshiba]] و[[Qsan]]. لو في تفصيل هيكلي أدق، يسعدني أسمعه منكم.',
-  f:['الموقع الرئيسي بيعرض [[MBUZZ Technologies]] كموقع منفصل ضمن المنظومة.','[[CB Insights]] بتوصفها شركة توزيع [[ICT]].'],
-  w:'التفاصيل القانونية (شركة منفصلة ولا فرع) ما تأكدتش منها. قولها كـ «حسب فهمي».'},
+  a:'حسب فهمي، [[MBUZZ]] هي الواجهة اللي بتقدّم الحلول والخدمات، و[[MBUZZ Technologies]] ذراع التوزيع اللي بيوزّع منتجات شركات عالمية زي [[Phison]] و[[Qsan]]. لو في تفصيل هيكلي أدق، يسعدني أسمعه منكم.',
+  f:['الموقع الرئيسي بيعرض [[MBUZZ Technologies]] كموقع منفصل ضمن المنظومة.'],
+  w:'التفاصيل القانونية ما تأكدتش منها. قولها «حسب فهمي».'},
  {q:'إيه فهمك لـ [[Sovereign AI]]؟',
-  a:'إن الدولة أو الجهة تبني وتشغّل الذكاء الاصطناعي، بنيته وبياناته ونماذجه، داخل حدودها وتحت سيطرتها بدل الاعتماد الكامل على خدمات خارجية. وشايف إن ده من أسباب الطلب الكبير في السعودية على مراكز البيانات وكلاسترات [[GPU]] المحلية.',
+  a:'إن الدولة أو الجهة تبني وتشغّل الذكاء الاصطناعي، بنيته وبياناته ونماذجه، داخل حدودها وتحت سيطرتها. وشايف إنه من أسباب الطلب في السعودية على مراكز البيانات وكلاسترات [[GPU]] المحلية.',
   f:['[[Sovereign AI]] مذكور كعرض في موقعهم.','تعريف عام مني، مش من مصدر رسمي.']},
- {q:'إزاي هتسوّق لعملاء حكوميين وكبار؟ (بيع [[B2B]] طويل)',
-  a:'العميل هنا مش بيشتري بقرار سريع. الثقة بتتبني بإثبات: دراسات حالة بنتائج، حضور في المعارض زي [[LEAP]]، ومحتوى بيشرح قيمة [[AI]] المؤسسي. وبشتغل على رحلة العميل من الوعي لطلب الاستشارة، وبقيس الجودة مش بس الكمية.',
+ {q:'إزاي هتسوّق أو تشتري إعلانات لعملاء [[B2B]] كبار؟',
+  a:'الميديا باينج في [[B2B]] مختلف: جمهور صغير وقرار طويل، فالمقياس جودة الـ [[Leads]] مش كميتها. بشتغل على قنوات مناسبة زي [[Google Search]] و[[LinkedIn]]، وبتابع من الإعلان لحد الـ [[CRM]]. وبما إني اشتغلت على الـ [[CRM]] في [[Odoo]] أقدر أربط الحملة بالمبيعات. [أضف رقم أو حملة حقيقية].',
   f:['أفكار عامة مني، مش حقايق عنهم.'],
-  w:'اسأل الأول: مين الجمهور الأهم عندكم دلوقتي؟ وبعدين اربط ردك بالإجابة.'},
- {q:'إيه التحدي الأكبر قدامنا في رأيك؟',
-  a:'من برّه، أشوف إن التحدي إن تحوّلكم من بنية تحتية وتوريد لخدمات [[AI]] متكاملة يتوصّل للسوق بوضوح. شراكة [[Magna AI]] خطوة في الاتجاه ده، والتواصل حواليها محتاج قصة واضحة. لكن أكيد انتوا أعرف مني، فياريت أسمع نظرتكم.',
-  f:['رأي مبني على اتجاه موقعهم وأخبارهم، مش معلومة داخلية.']},
+  w:'اسأل الأول: مين الجمهور الأهم عندكم دلوقتي؟ وبعدين اربط ردك.'},
+ {q:'إنت مش جاي من بنية تحتية. إزاي هتتعامل؟',
+  a:'صح، خبرتي في طبقة الأنظمة والويب والبيانات والنمو، مش في الـ [[GPU]] والشبكات. بتعلّم بسرعة وبستخدم الـ [[AI]] للتعلم. وشايف إن قيمتي إني أربط اللي بتبنوه بإزاي بيتباع ويتشغّل ويتقاس.',
+  f:['رد صريح أحسن من ادعاء خبرة مش عندك.']},
  {q:'مين منافسينا؟',
-  a:'ما عملتش مقارنة منهجية، ومش عايز أخمّن. اللي لاحظته إن السوق مليان شركات تكامل وموزعين، فالتميز بالنسبة لي هيبقى في إبراز مشاريعكم الفعلية وشراكاتكم زي [[NVIDIA]] و[[Magna AI]]. تحبوا أعمل مقارنة وأرجعلكم بيها؟',
+  a:'ما عملتش مقارنة منهجية، ومش عايز أخمّن. اللي لاحظته إن السوق مليان شركات تكامل وموزعين، فالتميز في إبراز مشاريعكم الفعلية وشراكاتكم زي [[NVIDIA]] و[[Magna AI]]. تحبوا أعمل مقارنة وأرجعلكم بيها؟',
   f:['مالقيتش قائمة منافسين موثوقة، فمفيش أسماء هنا عن قصد.'],
   w:'ما تسمّيش شركات من دماغك.'},
+ {q:'أنهي دور تفضّل؟ وتتوقع إيه؟',
+  a:'ما قدمتش على مسمى محدد لأن التواصل كان على المجالات الأربعة. أنا مرن في المسمى، وأفضّل نبدأ من الأولوية الأعلى عندكم، والمهم إني أشتغل في مكان لشغلي فيه أثر واضح.',
+  f:['ده الوقت المناسب تسأل عن الدور بوضوح.'],
+  w:'لو سألوا عن المقابل المادي، ما جهزتش رد هنا. جهّزه قبل الانترفيو.'},
  {q:'إيه خطتك في أول 90 يوم؟',
-  a:'أول 30 يوم: أسمع وأفهم العملاء والمشاريع والفريق وأراجع الوضع الحالي. بعدها 30 يوم: أحدد أولويتين أو تلاتة بتأثير سريع، زي توثيق مشروع أو تحسين نقطة في الموقع. وآخر 30 يوم: أنفّذ وأقيس وأعرض عليكم نتايج وخطة المرحلة اللي بعدها. [عدّل بحسب الدور]',
+  a:'أول 30 يوم: أسمع وأفهم المشاريع والعملاء والأدوات الحالية. التلاتين التانيين: أحدد أولويتين أو تلاتة بتأثير سريع، زي أتمتة مهمة متكررة بالـ [[AI]] أو ربط دراسة حالة بمشروع مسمّى. وآخر 30 يوم: أنفّذ وأقيس وأعرض النتايج وخطة المرحلة اللي بعدها. [عدّل بحسب الدور اللي هيتحدد].',
   f:['هيكل عام. ركّب عليه تفاصيل الدور بعد ما تعرفه.']}
 ];
-
 var ASK = [
- 'إيه أهم قطاع عايزين ينمّوا فيه في 2027: الحكومي ولا المؤسسات الخاصة؟',
+ 'إيه الأولوية الأهم عندكم من المجالات اللي اتواصلتوا معايا عليها: [[AI]] ولا الويب ولا [[ERP]] ولا الـ [[Media Buying]]؟',
+ 'الدور هيكون جوه فريق قائم ولا بناء وظيفة جديدة؟',
+ 'هل [[ERP]] مطلوب داخليًا ولا كخدمة للعملاء؟',
+ 'مين بيدير الموقع الحالي (الرئيسي و[[MBUZZ Technologies]]) وإزاي بتقيسوا أداءه؟',
+ 'إيه القنوات اللي بتجيب [[Leads]] دلوقتي، وفي ميزانية إعلانات؟',
  'بعد شراكة [[Magna AI]]، الرسالة للعملاء هتتحرك ناحية الاستشارات والتحول؟',
- 'إزاي بتتعاملوا مع التواصل بين [[MBUZZ]] و[[MBUZZ Technologies]]؟',
- 'فيه خطة لنشر دراسات حالة لمشاريع زي [[Baseer]] وكلاسترات [[GPU]]؟',
- 'إيه أكتر حاجة بتبطّئ دورة البيع في المشاريع الكبيرة؟',
- 'إيه اللي بيعتبره الفريق نجاح للدور ده بعد 6 شهور؟',
- 'ممكن أعرف شوية عن [[MBUZZ Labs]] و[[AI Factory]]؟'
+ 'إيه اللي بيعتبره الفريق نجاح للدور ده بعد 6 شهور؟'
 ];
-
 P.qa =
-'<h2>أسئلة متوقعة وردود مقترحة</h2><p class="lead">الردود صيغة مقترحة بالفصحى المبسطة. غيّرها بكلامك. القسم اللي اسمه «نقاط ثابتة» هو اللي تحفظه.</p>'+
+'<h2>أسئلة متوقعة وردود مقترحة</h2><p class="lead">الردود صيغة مقترحة بعربي مبسط ومصطلحات إنجليزي. غيّرها بكلامك. القسم اللي اسمه «نقاط ثابتة» هو اللي تحفظه. الأقواس المربعة أماكن لأرقامك الحقيقية.</p>'+
 QA.map(qa).join('')+
-'<h3 style="margin:22px 0 10px">أسئلة تسألها إنت</h3><div class="grid">'+
-ASK.map(function(q){return card({t:'سؤال',b:q,c:'op'});}).join('')+'</div>';
+'<h3 class="sec" style="margin-top:22px">أسئلة تسألها إنت</h3><div class="grid">'+
+ASK.map(function(q){return card({t:'سؤال',b:q,c:'op',m:1});}).join('')+'</div>';
 
+/* ---------- SAFE ---------- */
 P.safe =
 '<h2>حدود الدقة</h2><p class="lead">القسم ده يحميك من الإحراج. راجعه قبل ما تدخل.</p>'+
 '<div class="two">'+
- '<div class="box good it" data-c="ok" data-t="قول مؤكد"><h3>قوله بثقة</h3>'+list([
-  'تأسست 2007 وبقت مساهمة 2022 (من صفحة من نحن).',
+ '<div class="box good it mine" data-c="ok" data-t="قول مؤكد"><h3>قوله بثقة</h3>'+list([
+  'تأسست 2007 وبقت مساهمة 2022 (صفحة من نحن).',
   'المقر الرياض، مكاتب في الخبر ودبي.',
-  'مشروع [[SDAIA]] [[Baseer]]: كلاستر [[10× H100]] (من صفحة المشاريع).',
-  'شراكة [[Magna AI]] سبتمبر 2026، وتغطيتها واسعة.',
+  'مشروع [[SDAIA]] [[Baseer]]: كلاستر [[10x H100]].',
+  'شراكة [[Magna AI]] بتاريخ 6 سبتمبر 2026.',
+  'تمديد شراكة [[TAWAL]] بتاريخ 3 سبتمبر 2026 (إعلان على موقعهم).',
   'توزيع [[Phison]] مايو 2026.',
-  'شراكة [[6GAI]] لسحابة [[AI]] في السويد.'])+'</div>'+
- '<div class="box unk it" data-c="mid" data-t="بحذر"><h3>قوله بصيغة «بحسب موقعكم»</h3>'+list([
-  '500+ خبير، 50+ شراكة، 40+ دولة.',
+  '4 دراسات حالة منشورة في مارس 2026.'])+'</div>'+
+ '<div class="box unk it mine" data-c="mid" data-t="بحذر"><h3>قوله بصيغة «بحسب موقعكم»</h3>'+list([
+  '40+ دولة، 500+ خبير، 50+ شريك، 250+ عميل.',
   'كلاستر [[GB300]] سنة 2026.',
-  'تمويل 2022 من [[Tech Invest Com]] (من قاعدة بيانات).',
+  'تمويل 2022 من [[Tech Invest Com]] (قاعدة بيانات خارجية).',
   'المناصب القيادية الحالية.'])+'</div>'+
- '<div class="box bad it" data-c="no" data-t="لا تذكره"><h3>ما تقولهوش</h3>'+list([
-  'إيرادات أو رقم موظفين محدد.',
+ '<div class="box bad it mine" data-c="no" data-t="لا تذكره"><h3>ما تقولهوش</h3>'+list([
+  'إيرادات أو عدد موظفين محدد.',
   'تفاصيل «أكبر مركز ذكاء اصطناعي» (تصريح 2023).',
-  'تمديد شراكة [[TAWAL]] بأي تفاصيل.',
   'إن [[MBUZZ]] بنت مصانع [[HUMAIN]] أو [[SDAIA]] كلها. المعلن هو كلاستر [[Baseer]] بس.',
   'أي تفاصيل عن [[MBUZZ Labs]] أو [[AI Factory]].',
-  'سنين مشاريع أو أسماء مطارات في دراسة الحالة.',
+  'سنين المشاريع، أو ربط دراسة حالة المطار بمشروع [[GACA]].',
+  'تفاصيل زيادة على اللي مكتوب في خبر [[TAWAL]].',
   'اسم شركة [[Mbuzz]] اللي في سيدني: دي شركة تانية.'])+'</div>'+
- '<div class="box unk it" data-c="mid" data-t="مش لاقيه"><h3>ملقيتش عنه معلومة</h3>'+list([
+ '<div class="box unk it mine" data-c="mid" data-t="مش لاقيه"><h3>ملقيتش عنه معلومة</h3>'+list([
   'الإيرادات والأرباح.',
   'عدد الموظفين الدقيق حاليًا.',
-  'الـ[[CEO]] الحالي لـ [[MBUZZ Technologies]].',
+  'الـ [[CEO]] الحالي لـ [[MBUZZ Technologies]].',
   'أي وظايف مفتوحة (الصفحة بتعرض مسار تدريب فقط).',
-  'منافسين مباشرين موثقين.'])+'</div>'+
+  'منافسين مباشرين موثقين.',
+  'هل عندهم عرض [[ERP]] أو استخدام داخلي له.'])+'</div>'+
 '</div>'+
 '<div class="grid">'+
- card({t:'لا تخلط مع [[Mbuzz]] سيدني',b:'في شركة تانية بنفس الاسم في أستراليا بتطوّر برنامج [[attribution]] للتسويق، تأسست سنة 2026. مالها علاقة بـ [[MBUZZ]] السعودية.',c:'ok',s:['syd']})+
- card({t:'[[MoU]] ولا شراكة؟',b:'موقعهم بيسمّيها [[MoU]]، والبيانات الصحفية بتسميها شراكة استراتيجية. قول «شراكة» وهتكون آمن.',c:'ok',s:['site','magna']})+
+ card({t:'لا تخلط مع [[Mbuzz]] سيدني',b:'في شركة تانية بنفس الاسم في أستراليا بتطوّر برنامج [[attribution]] للتسويق، تأسست سنة 2026. مالها علاقة بـ [[MBUZZ]] السعودية.',c:'ok',m:1,s:['syd']})+
+ card({t:'[[MoU]] ولا شراكة؟',b:'عنوان الخبر على موقعهم بيقول «[[MoU]]» والنص بيقول اتفاقية شراكة استراتيجية. قول «شراكة استراتيجية».',c:'ok',m:1,s:['nMagna']})+
 '</div>';
 
 /* ---------- render ---------- */
-var order = ['summary','company','work','news','market','qa','safe'];
-order.forEach(function(k){document.getElementById('p-'+k).innerHTML = en(P[k]);});
-/* P[k] strings already contain en() output from builders; run once more is harmless only for raw [[ ]] left in static html */
+['home','company','work','news','market','me','qa','safe'].forEach(function(k){document.getElementById('p-'+k).innerHTML = en(P[k]);});
 
 /* project rows */
 function renderRows(cat){
   var h='';
   PRJ.forEach(function(r){
     if(cat!=='الكل' && r[2]!==cat) return;
-    var t=(r.join(' ')).toLowerCase();
-    h+='<tr class="it" data-c="ok" data-t="'+t.replace(/"/g,'')+'"><td><bdi class="en" dir="ltr">'+r[0]+'</bdi></td><td>'+r[1]+'</td><td><bdi class="en" dir="ltr">'+r[2]+'</bdi></td><td>'+r[3]+'</td><td><bdi class="en" dir="ltr">'+r[4]+'</bdi></td></tr>';
+    h+='<tr class="it" data-c="ok" data-t="'+plain(r.join(' '))+'"><td><bdi class="en" dir="ltr">'+r[0]+'</bdi></td><td>'+r[1]+'</td><td><bdi class="en" dir="ltr">'+r[2]+'</bdi></td><td>'+r[3]+'</td><td><bdi class="en" dir="ltr">'+r[4]+'</bdi></td></tr>';
   });
   document.getElementById('prows').innerHTML=h; applyFilters();
 }
@@ -454,8 +560,8 @@ cats.forEach(function(c,i){
   pc.appendChild(b);
 });
 
-/* checklist */
-var CHK=['فتحت mbuzz.com وراجعت الصفحة الرئيسية وصفحة المشاريع','حفظت جملة التعريف (30 ثانية)','جهّزت سؤالين على الأقل أسألهم','راجعت قسم «ما تقولهوش»','عرفت اسم المحاور وبحثت عنه على لينكدإن','جهزت رابط الاجتماع والجهاز والصوت'];
+/* checklist (per-viewer convenience, localStorage with try/catch) */
+var CHK=['فتحت mbuzz.com وراجعت الصفحة الرئيسية وصفحة المشاريع ودراسات الحالة','حفظت جملة التعريف (30 ثانية)','كتبت أرقامي وأمثلتي في «ورقة أرقامي»','جهّزت سؤالين على الأقل أسألهم، أولهم عن الدور','راجعت قسم «ما تقولهوش»','عرفت اسم المحاور وبحثت عنه على لينكدإن','جهزت رابط الاجتماع والجهاز والصوت','لو هعرض الصفحة: جرّبت «وضع العرض» وتأكدت إنه بيخفي الخاص بي'];
 var store={};try{store=JSON.parse(localStorage.getItem('mbuzzChk')||'{}');}catch(e){}
 var cl=document.getElementById('checklist');
 CHK.forEach(function(t,i){
@@ -463,6 +569,17 @@ CHK.forEach(function(t,i){
   c.addEventListener('change',function(){store[i]=c.checked;try{localStorage.setItem('mbuzzChk',JSON.stringify(store));}catch(e){}});
   var s=document.createElement('span');s.innerHTML=en(t.replace('mbuzz.com','[[mbuzz.com]]'));
   l.appendChild(c);l.appendChild(s);cl.appendChild(l);
+});
+
+/* notepad */
+var PAD=[['years','سنين الخبرة في كل مجال (ويب، Odoo، AI، Media Buying)'],['odoo','أبرز مشروع Odoo: الحجم والمشكلة والنتيجة'],['ai','مثال واقعي على أتمتة بالـ AI: قبل وبعد (وقت أو تكلفة)'],['media','أبرز حملة إعلانية: الميزانية والنتيجة'],['web','أبرز موقع أو نظام بنيته'],['salary','ردك لو سألوا عن المقابل المادي']];
+var padv={};try{padv=JSON.parse(localStorage.getItem('mbuzzPad')||'{}');}catch(e){}
+var pad=document.getElementById('pad');
+PAD.forEach(function(p){
+  var l=document.createElement('label');l.setAttribute('for','pad-'+p[0]);l.textContent=p[1];
+  var t=document.createElement('textarea');t.id='pad-'+p[0];t.value=padv[p[0]]||'';
+  t.addEventListener('input',function(){padv[p[0]]=t.value;try{localStorage.setItem('mbuzzPad',JSON.stringify(padv));}catch(e){}});
+  l.appendChild(t);pad.appendChild(l);
 });
 
 /* copy pitch */
@@ -473,21 +590,41 @@ document.getElementById('copyPitch').addEventListener('click',function(){
 });
 
 /* tabs + hash routing */
+var order=['home','company','work','news','market','me','qa','safe'];
 var tabs=document.getElementById('tabs'),panels=[].slice.call(document.querySelectorAll('.panel'));
-panels.forEach(function(p,i){
-  var b=document.createElement('button');b.className='tab';b.type='button';b.role='tab';b.textContent=p.dataset.title;b.dataset.k=p.id.slice(2);
+panels.forEach(function(p){
+  var b=document.createElement('button');b.className='tab'+(p.dataset.mine?' mine-tab':'');b.type='button';b.setAttribute('role','tab');b.textContent=p.dataset.title;b.dataset.k=p.id.slice(2);
   b.addEventListener('click',function(){show(b.dataset.k);history.replaceState(null,'','#'+b.dataset.k);window.scrollTo({top:0});});
   tabs.appendChild(b);
 });
+function isMinePanel(k){var p=document.getElementById('p-'+k);return p&&p.dataset.mine;}
 function show(k){
-  if(order.indexOf(k)<0)k='summary';
+  if(order.indexOf(k)<0)k='home';
+  if(present&&isMinePanel(k))k='home';
   panels.forEach(function(p){p.classList.toggle('on',p.id==='p-'+k);});
   [].forEach.call(tabs.children,function(b){b.setAttribute('aria-selected',b.dataset.k===k?'true':'false');});
 }
 window.addEventListener('hashchange',function(){show(location.hash.slice(1));});
 
+/* presentation mode */
+var present=false,pbtn=document.getElementById('presentBtn');
+try{present=sessionStorage.getItem('mbuzzPresent')==='1';}catch(e){}
+function setPresent(v){
+  present=v;document.body.classList.toggle('present',v);pbtn.setAttribute('aria-pressed',v?'true':'false');
+  pbtn.textContent=v?'وضع العرض مفعّل':'وضع العرض';
+  try{sessionStorage.setItem('mbuzzPresent',v?'1':'0');}catch(e){}
+  if(v){curF='all';[].forEach.call(document.querySelectorAll('[data-f]'),function(x){x.setAttribute('aria-pressed',x.dataset.f==='all'?'true':'false');});}
+  applyFilters();
+}
+pbtn.addEventListener('click',function(){setPresent(!present);});
+
 /* search + confidence filter */
-var q=document.getElementById('q'),fchips=[].slice.call(document.querySelectorAll('.bar .chips:first-of-type .chip,.bar .chips .chip')),curF='all';
+var q=document.getElementById('q'),curF='all';
+function isVisible(el){
+  if(el.classList.contains('hide'))return false;
+  if(present&&(el.dataset.c==='no'||el.dataset.c==='op'||el.closest('.mine')))return false;
+  return true;
+}
 function applyFilters(){
   var term=q.value.trim().toLowerCase(),active=term!==''||curF!=='all';
   document.body.classList.toggle('all',active);
@@ -497,15 +634,17 @@ function applyFilters(){
     el.classList.toggle('hide',!ok);
   });
   panels.forEach(function(p){
-    var vis=p.querySelectorAll('.it:not(.hide)').length, tot=p.querySelectorAll('.it').length;
-    var empty=active&&vis===0&&tot>0;
-    p.classList.toggle('empty',empty);
-    if(active&&vis>0)any=true;
+    var items=[].slice.call(p.querySelectorAll('.it')),vis=items.filter(isVisible).length;
+    var hiddenPanel=present&&p.dataset.mine;
+    p.classList.toggle('empty',(active&&vis===0&&items.length>0)||!!hiddenPanel);
+    if(active&&vis>0&&!hiddenPanel)any=true;
   });
-  /* hide tl and table wrappers with no visible rows */
-  [].forEach.call(document.querySelectorAll('.tl,.tablewrap'),function(w){w.classList.toggle('hide',active&&w.querySelectorAll('.it:not(.hide)').length===0);});
+  [].forEach.call(document.querySelectorAll('.tl,.tablewrap'),function(w){
+    var its=[].slice.call(w.querySelectorAll('.it'));
+    w.classList.toggle('hide',active&&its.filter(isVisible).length===0);
+  });
   document.body.classList.toggle('nores',active&&!any);
-  if(!active){show(location.hash.slice(1)||'summary');}
+  if(!active){show(location.hash.slice(1)||'home');}
 }
 q.addEventListener('input',applyFilters);
 [].forEach.call(document.querySelectorAll('[data-f]'),function(b){
@@ -525,7 +664,8 @@ function tick(){
 tick();setInterval(tick,30000);
 
 renderRows('الكل');
-show(location.hash.slice(1)||'summary');
+setPresent(present);
+show(location.hash.slice(1)||'home');
 </script>
 </body>
 </html>
